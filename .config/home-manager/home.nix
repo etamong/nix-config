@@ -37,6 +37,7 @@
     # '')
     pkgs.zsh-powerlevel10k
     pkgs.zsh-autosuggestions
+    pkgs.zsh-history-substring-search
     pkgs.fzf
     pkgs.claude-code
   ];
@@ -107,6 +108,7 @@
       enable = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
+      historySubstringSearch.enable = true;
       history = {
         path = "$HOME/.zsh_history";
         size = 10000;
