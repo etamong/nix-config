@@ -82,6 +82,7 @@
     "$HOME/scripts"
     "$HOME/.cargo/bin"
     "${config.home.homeDirectory}/.asdf/shims"
+    "${config.home.homeDirectory}/Library/Application Support/JetBrains/Toolbox/scripts"
   ];
 
   # Let Home Manager install and manage itself.
