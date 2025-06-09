@@ -114,6 +114,7 @@
         share = true;
         ignoreDups = true;
         ignoreSpace = true;
+        extended = true;
       };
       initExtra = ''
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
