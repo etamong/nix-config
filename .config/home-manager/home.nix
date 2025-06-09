@@ -1,6 +1,7 @@
 { config, pkgs, ... }:
 
 {
+  nixpkgs.config.allowUnfree = true;
   # Home Manager needs a bit of information about you and the paths it should
   # manage.
   home.username = "jhlee";
@@ -37,6 +38,7 @@
     pkgs.zsh-powerlevel10k
     pkgs.zsh-autosuggestions
     pkgs.fzf
+    pkgs.claude-code
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
