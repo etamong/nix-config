@@ -96,6 +96,11 @@
 
     bash.enable = true;
     
+    fzf = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
     zsh = {
       enable = true;
       autosuggestion.enable = true;
