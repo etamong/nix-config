@@ -42,125 +42,30 @@ echo -e "${GREEN}Flake initialized successfully!${NC}"
 echo -e "${GREEN}Generated flake.nix:${NC}"
 cat flake.nix
 
-if [ -f "configuration.nix" ]; then
-    echo -e "${GREEN}Generated configuration.nix:${NC}"
-    cat configuration.nix
+# Copy our centralized configuration and customize it
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_SOURCE="${SCRIPT_DIR}/.config/nix-darwin/configuration.nix"
+
+if [ -f "$CONFIG_SOURCE" ]; then
+    echo -e "${YELLOW}Using centralized configuration from repository...${NC}"
     
-    echo -e "${YELLOW}Customizing configuration.nix for better defaults...${NC}"
+    # Copy and customize the configuration
+    cp "$CONFIG_SOURCE" configuration.nix
     
-    # Add Homebrew integration and common settings
-    cat > configuration.nix << EOF
-{ config, lib, pkgs, ... }:
-
-{
-  # List packages installed in system profile. To search by name, run:
-  # \$ nix-env -qaP | grep wget
-  environment.systemPackages = [
-    # Add your favorite packages here
-  ];
-
-  # Homebrew integration
-  homebrew = {
-    enable = true;
-    onActivation = {
-      cleanup = "zap";
-      autoUpdate = true;
-      upgrade = true;
-    };
+    # Replace placeholders with actual values
+    sed -i '' "s/__USERNAME__/${CURRENT_USER}/g" configuration.nix
     
-    taps = [
-      "homebrew/cask"
-      "homebrew/core"
-    ];
-    
-    brews = [
-      # Add CLI tools here
-    ];
-    
-    casks = [
-      "iterm2"
-      "google-chrome" 
-      "karabiner-elements"
-      # Add GUI applications here
-    ];
-  };
-
-  # Fonts
-  fonts.packages = [
-    # Fonts are managed through home-manager
-  ];
-
-  # System settings
-  system = {
-    defaults = {
-      dock = {
-        autohide = true;
-        orientation = "bottom";
-        showhidden = true;
-        minimize-to-application = true;
-      };
-      
-      finder = {
-        AppleShowAllExtensions = true;
-        AppleShowAllFiles = true;
-        ShowPathbar = true;
-        ShowStatusBar = true;
-      };
-      
-      NSGlobalDomain = {
-        AppleShowAllExtensions = true;
-        InitialKeyRepeat = 14;
-        KeyRepeat = 1;
-      };
-    };
-    
-    keyboard = {
-      enableKeyMapping = true;
-      remapCapsLockToControl = true;
-    };
-  };
-
-  # Users configuration
-  users.users.${CURRENT_USER} = {
-    name = "${CURRENT_USER}";
-    home = "/Users/${CURRENT_USER}";
-  };
-
-  # Enable sudo authentication with Touch ID
-  security.pam.enableSudoTouchIdAuth = true;
-
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
-  
-  # Nix package manager settings
-  nix = {
-    package = pkgs.nix;
-    settings = {
-      experimental-features = "nix-command flakes";
-      trusted-users = [ "@admin" "${CURRENT_USER}" ];
-    };
-  };
-
-  # Create /etc/zshrc that loads the nix-darwin environment.
-  programs.zsh.enable = true;
-
-  # Set Git commit hash for darwin-version.
-  system.configurationRevision = config.rev or config.dirtyRev or null;
-
-  # Used for backwards compatibility, please read the changelog before changing.
-  # \$ darwin-rebuild changelog
-  system.stateVersion = 5;
-
-  # The platform the configuration will be used on.
-  nixpkgs.hostPlatform = "aarch64-darwin";
-}
-EOF
-
-    echo -e "${GREEN}Updated configuration.nix with better defaults:${NC}"
+    echo -e "${GREEN}Applied configuration.nix with:${NC}"
+    echo "- Username: ${CURRENT_USER}"
     echo "- Homebrew integration with iTerm2, Chrome, Karabiner"
     echo "- macOS system defaults (Dock, Finder, Keyboard)"
     echo "- Touch ID for sudo authentication"
-    echo "- Proper user configuration"
+    
+elif [ -f "configuration.nix" ]; then
+    echo -e "${YELLOW}Using default generated configuration.nix...${NC}"
+    # Update username in default configuration
+    sed -i '' "s/users.users.simple/users.users.${CURRENT_USER}/" configuration.nix
+    sed -i '' "s/home = \"\/Users\/simple\"/home = \"\/Users\/${CURRENT_USER}\"/" configuration.nix
 fi
 
 echo -e "${YELLOW}Installing nix-darwin (this may take several minutes)...${NC}"
