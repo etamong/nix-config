@@ -74,6 +74,17 @@
     home = "/Users/__USERNAME__";
   };
 
+  # Home Manager integration
+  imports = [
+    <home-manager/nix-darwin>
+  ];
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    users.__USERNAME__ = import ./home.nix;
+  };
+
   # Enable sudo authentication with Touch ID
   security.pam.enableSudoTouchIdAuth = true;
 
