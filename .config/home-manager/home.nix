@@ -43,6 +43,7 @@
     pkgs.fzf
     pkgs.claude-code
     pkgs.gh
+    pkgs.awscli2
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -127,5 +128,6 @@
       '';
     };
   };
+
 
 }
