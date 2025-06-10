@@ -44,6 +44,7 @@
     pkgs.claude-code
     pkgs.gh
     pkgs.awscli2
+    pkgs.go
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -88,6 +89,7 @@
     "$HOME/.local/bin"
     "$HOME/scripts"
     "$HOME/.cargo/bin"
+    "$HOME/sources/go/bin"
     "${config.home.homeDirectory}/.asdf/shims"
     "${config.home.homeDirectory}/Library/Application Support/JetBrains/Toolbox/scripts"
   ];
