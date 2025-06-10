@@ -32,6 +32,6 @@ sudo sed -i '' "s/__USERNAME__/${CURRENT_USER}/g" /etc/nix-darwin/configuration.
 echo -e "${GREEN}Configuration updated. Applying changes...${NC}"
 
 # Apply the configuration
-sudo darwin-rebuild switch
+darwin-rebuild switch
 
 echo -e "${GREEN}✅ nix-darwin configuration updated successfully!${NC}"
