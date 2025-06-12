@@ -90,7 +90,6 @@
     "$HOME/scripts"
     "$HOME/.cargo/bin"
     "$HOME/sources/go/bin"
-    "${config.home.homeDirectory}/.asdf/shims"
     "${config.home.homeDirectory}/Library/Application Support/JetBrains/Toolbox/scripts"
   ];
 
