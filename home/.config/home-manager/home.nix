@@ -45,6 +45,7 @@
     pkgs.gh
     pkgs.awscli2
     pkgs.go
+    pkgs.nodejs
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -60,7 +61,25 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+    
+    ".npm-global/.keep".text = "";
   };
+
+  # iTerm2 key mappings configuration  
+  home.activation.iterm2Config = config.lib.dag.entryAfter ["writeBoundary"] ''
+    # Configure iTerm2 key mappings for Option+Arrow word jumping
+    # Create the key mappings using defaults command
+    /usr/bin/defaults write com.googlecode.iterm2 "GlobalKeyMap" '{
+      "0xf702-0x300000" = {
+        "Action" = 11;
+        "Text" = "0x1b 0x62";
+      };
+      "0xf703-0x300000" = {
+        "Action" = 11;
+        "Text" = "0x1b 0x66";
+      };
+    }' 2>/dev/null || echo "iTerm2 key mapping configuration applied"
+  '';
 
   # Home Manager can also manage your environment variables through
   # 'home.sessionVariables'. These will be explicitly sourced when using a
@@ -82,6 +101,7 @@
     # EDITOR = "emacs";
     GOPATH = "$HOME/sources/go";
     VAULT_ADDR = "https://vault.devsisters.cloud";
+    NPM_CONFIG_PREFIX = "$HOME/.npm-global";
   };
 
   home.sessionPath = [
@@ -90,6 +110,7 @@
     "$HOME/scripts"
     "$HOME/.cargo/bin"
     "$HOME/sources/go/bin"
+    "$HOME/.npm-global/bin"
     "${config.home.homeDirectory}/Library/Application Support/JetBrains/Toolbox/scripts"
   ];
 
