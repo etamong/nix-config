@@ -147,6 +147,14 @@
       initExtra = ''
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+        awslogin() {
+          saml2aws login --force --session-duration=43200 --disable-keychain
+        }
+
+        valutlogin() {
+          vault login -method=oidc > /dev/null
+        }
       '';
     };
   };
