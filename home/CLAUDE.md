@@ -27,7 +27,7 @@ My Nix configuration and home-manager configuration are managed in `~/sources/gi
 
 4. **Apply nix-darwin changes**:
    ```bash
-   ./update-nix-darwin.sh
+   ./scripts/update-nix-darwin.sh
    ```
 
 5. **Apply home-manager changes**:
@@ -42,9 +42,9 @@ My Nix configuration and home-manager configuration are managed in `~/sources/gi
    ```
 
 ## Key Scripts
-- `update-nix-darwin.sh` - Apply nix-darwin configuration changes
-- `init-nix-darwin.sh` - Initial nix-darwin setup
-- `link.sh` - Link configuration files
+- `scripts/update-nix-darwin.sh` - Apply nix-darwin configuration changes
+- `scripts/init-nix-darwin.sh` - Initial nix-darwin setup
+- `scripts/link.sh` - Link configuration files
 
 ## Configuration Guidelines
 - System-level packages: `environment.systemPackages` in nix-darwin
