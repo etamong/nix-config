@@ -279,7 +279,10 @@
         vaultctx = "~/.vaultctx/script";
       };
       loginExtra = ''
-        chawsctx saml infra
+        # Only run chawsctx if it's available
+        if command -v chawsctx >/dev/null 2>&1; then
+          chawsctx saml infra
+        fi
       '';
     };
   };

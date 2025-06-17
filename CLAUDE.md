@@ -14,7 +14,7 @@ When working with nix-darwin configuration:
    ```
    If there are uncommitted changes, review them with the user before proceeding.
 
-2. **Edit configuration**: Make changes to `.config/nix-darwin/configuration.nix`
+2. **Edit configuration**: Make changes to `home/.config/nix-darwin/configuration.nix`
 
 3. **Apply changes**: Run the update script to copy to system location and rebuild
    ```bash
@@ -28,10 +28,10 @@ When working with nix-darwin configuration:
    ```
 
 ## Key Files
-- `.config/nix-darwin/configuration.nix` - Centralized nix-darwin configuration (edit this)
+- `home/.config/nix-darwin/configuration.nix` - Centralized nix-darwin configuration (edit this)
 - `update-nix-darwin.sh` - Script to apply configuration changes
 - `init-nix-darwin.sh` - Initial nix-darwin setup script
-- `.config/home-manager/home.nix` - Home-manager configuration
+- `home/.config/home-manager/home.nix` - Home-manager configuration
 
 ## Configuration Guidelines
 - Use `__USERNAME__` placeholder for username references in nix-darwin config

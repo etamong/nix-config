@@ -9,18 +9,18 @@ NC='\033[0m' # No Color
 # Get current system configuration
 CURRENT_USER=$(whoami)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-CONFIG_SOURCE="${SCRIPT_DIR}/.config/nix-darwin/configuration.nix"
+CONFIG_SOURCE="${SCRIPT_DIR}/home/.config/nix-darwin/configuration.nix"
 
 echo -e "${YELLOW}Updating nix-darwin configuration...${NC}"
 
 if [ ! -f "$CONFIG_SOURCE" ]; then
-    echo "Error: Configuration file not found at $CONFIG_SOURCE"
-    exit 1
+  echo "Error: Configuration file not found at $CONFIG_SOURCE"
+  exit 1
 fi
 
 if [ ! -d "/etc/nix-darwin" ]; then
-    echo "Error: nix-darwin not installed. Run ./init-nix-darwin.sh first."
-    exit 1
+  echo "Error: nix-darwin not installed. Run ./init-nix-darwin.sh first."
+  exit 1
 fi
 
 # Copy and customize the configuration
