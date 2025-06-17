@@ -46,6 +46,9 @@
     pkgs.awscli2
     pkgs.go
     pkgs.nodejs
+    pkgs.python3
+    pkgs.saml2aws
+    pkgs.vault
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -130,6 +133,10 @@
       enableZshIntegration = true;
     };
 
+    lazygit = {
+      enable = true;
+    };
+
     zsh = {
       enable = true;
       autosuggestion.enable = true;
@@ -148,13 +155,35 @@
         source ${pkgs.zsh-powerlevel10k}/share/zsh-powerlevel10k/powerlevel10k.zsh-theme
         [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+        autoload -U +X bashcompinit && bashcompinit
+        autoload -U +X compinit && compinit
+
         awslogin() {
           saml2aws login --force --session-duration=43200 --disable-keychain
         }
 
-        valutlogin() {
+        source $HOME/sources/github.com/devsisters/awsctx/shells/bash/awsctx.sh
+
+        vaultlogin() {
           vault login -method=oidc > /dev/null
         }
+
+        load_vault_envs() {
+          export VAULT_ADDR=$(vaultctx get-addr)
+        }
+        
+        typeset -a precmd_functions
+        precmd_functions+=(load_vault_envs)
+
+
+      '';
+      shellAliases = {
+        chawsctx = "foo() { export AWS_PROFILE=$1; awsctx $2}; foo $1 $2";
+        python = "python3";
+        vaultctx = "~/.vaultctx/script";
+      };
+      loginExtra = ''
+        chawsctx saml infra
       '';
     };
   };
