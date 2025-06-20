@@ -3,8 +3,10 @@
 {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
-  environment.systemPackages = [
-    # Add your favorite packages here
+  environment.systemPackages = with pkgs; [
+    # Core Unix utilities (to ensure they're always available)
+    coreutils
+    findutils
   ];
 
   # Homebrew integration
@@ -101,7 +103,13 @@
   };
 
   # Create /etc/zshrc that loads the nix-darwin environment.
-  programs.zsh.enable = true;
+  programs.zsh = {
+    enable = true;
+    # Ensure PATH includes standard system directories
+    shellInit = ''
+      export PATH="/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+    '';
+  };
 
   # Set Git commit hash for darwin-version.
   system.configurationRevision = config.rev or config.dirtyRev or null;
