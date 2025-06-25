@@ -7,6 +7,7 @@
     # Core Unix utilities (to ensure they're always available)
     coreutils
     findutils
+    gnupg
   ];
 
   # Homebrew integration
@@ -19,8 +20,7 @@
     };
     
     taps = [
-      "homebrew/cask"
-      "homebrew/core"
+      # These taps are now included by default
     ];
     
     brews = [
@@ -29,6 +29,7 @@
     
     casks = [
       "iterm2"
+      "gitkraken"
       "google-chrome" 
       "karabiner-elements"
       # Add GUI applications here
@@ -70,35 +71,40 @@
     };
   };
 
-  # Users configuration (placeholder for substitution)
-  users.users.__USERNAME__ = {
-    name = "__USERNAME__";
-    home = "/Users/__USERNAME__";
+  # Users configuration 
+  users.users.jhlee = {
+    name = "jhlee";
+    home = "/Users/jhlee";
   };
 
-  # Home Manager integration
-  imports = [
-    <home-manager/nix-darwin>
-  ];
+  # Set primary user for nix-darwin
+  system.primaryUser = "jhlee";
 
-  home-manager = {
-    useGlobalPkgs = true;
-    useUserPackages = true;
-    users.__USERNAME__ = import ./home.nix;
-  };
+  # Set the path to the darwin configuration
+  environment.darwinConfig = "/Users/jhlee/sources/github.com/jholee/nix-config/etc/nix-darwin/configuration.nix";
+
+  # Home Manager integration (commented out - manage separately)
+  # imports = [
+  #   <home-manager/nix-darwin>
+  # ];
+
+  # home-manager = {
+  #   useGlobalPkgs = true;
+  #   useUserPackages = true;
+  #   users.jhlee = import ../../home/.config/nix/home.nix;
+  # };
 
   # Enable sudo authentication with Touch ID
-  security.pam.enableSudoTouchIdAuth = true;
+  security.pam.services.sudo_local.touchIdAuth = true;
 
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # nix-daemon is now managed automatically by nix-darwin
   
   # Nix package manager settings
   nix = {
     package = pkgs.nix;
     settings = {
       experimental-features = "nix-command flakes";
-      trusted-users = [ "@admin" "__USERNAME__" ];
+      trusted-users = [ "@admin" "jhlee" ];
     };
   };
 
