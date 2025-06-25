@@ -41,7 +41,6 @@
     pkgs.zsh-autosuggestions
     pkgs.zsh-history-substring-search
     pkgs.fzf
-    pkgs.claude-code
     pkgs.gh
     pkgs.awscli2
     pkgs.go
@@ -64,6 +63,14 @@
     #   org.gradle.console=verbose
     #   org.gradle.daemon.idletimeout=3600000
     # '';
+
+    ".local/bin/install-claude-code" = {
+        text = ''
+          #!/bin/sh
+          npm install -g @anthropic-ai/claude-code
+        '';
+        executable = true;
+      };
     
     ".npm-global/.keep".text = "";
     
@@ -165,6 +172,16 @@
       }
     '';
   };
+
+  # iTerm2 key mappings configuration  
+  # Install specific version of claude-code
+  home.activation.claudeCodeInstall = config.lib.dag.entryAfter ["writeBoundary"] ''
+    export PATH="${pkgs.nodejs}/bin:$PATH"
+    if ! command -v claude >/dev/null 2>&1 || [[ "$(claude --version 2>/dev/null | grep -o '[0-9.]*')" != "1.0.30" ]]; then
+      echo "Installing claude-code v1.0.30..."
+      npm install -g @anthropic-ai/claude-code@1.0.30
+    fi
+  '';
 
   # iTerm2 key mappings configuration  
   home.activation.iterm2Config = config.lib.dag.entryAfter ["writeBoundary"] ''
