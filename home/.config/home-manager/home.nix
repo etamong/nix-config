@@ -177,10 +177,8 @@
   # Install specific version of claude-code
   home.activation.claudeCodeInstall = config.lib.dag.entryAfter ["writeBoundary"] ''
     export PATH="${pkgs.nodejs}/bin:$PATH"
-    if ! command -v claude >/dev/null 2>&1 || [[ "$(claude --version 2>/dev/null | grep -o '[0-9.]*')" != "1.0.30" ]]; then
-      echo "Installing claude-code v1.0.30..."
-      npm install -g @anthropic-ai/claude-code@1.0.30
-    fi
+    echo "Installing claude-code..."
+    npm install -g @anthropic-ai/claude-code
   '';
 
   # iTerm2 key mappings configuration  
