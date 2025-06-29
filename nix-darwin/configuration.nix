@@ -79,35 +79,12 @@
   };
 
   services.nix-daemon.enable = true;
-  nix = {
-    package = pkgs.nix;
-
-    # Necessary for using flakes on this system.
-    settings = {
-        experimental-features = "nix-command flakes";
-        trusted-users = [ "@admin" ];
-    };
-
-    gc = {
-        automatic = true;
-        interval = { Weekday = 0; Hour = 2; Minute = 0; };
-        options = "--delete-older than 30d";
-    };
-  };
-
-  # Enable alternative shell support in nix-darwin.
-  programs.zsh.enable = true;
-
-  system.defaults = {
-    # dock
-
-  services.nix-daemon.enable = true;
 
   # Set the path to the darwin configuration
   environment.darwinConfig = "/Users/jhlee/sources/github.com/jholee/nix-config/etc/nix-darwin/configuration.nix";
 
-  # Enable sudo authentication with Touch ID
-  security.pam.services.sudo_local.touchIdAuth = true;
+#  # Enable sudo authentication with Touch ID
+#  security.pam.services.sudo_local.touchIdAuth = true;
 
   # Nix package manager settings
   nix = {
@@ -137,17 +114,23 @@
 
   system.defaults = {
     # dock
-    dock.autohide = true;
-    dock.mru-spaces = false;
+    dock = {
+        autohide = true;
+        mru-spaces = false;
+    };
 
     # finder
-    finder.AppleShowAllExtensions = true;
-    finder.FXPreferredViewStyle = "clmv";
+    finder = {
+        AppleShowAllExtensions = true;
+        FXPreferredViewStyle = "clmv";
+    };
 
-    # NSGlobalDomain
-#    NSGlobalDomain.AppleShowAllExtensions = true;
-#    NSGlobalDomain.InitialKeyRepeat = 14;
-#    NSGlobalDomain.KeyRepeat = 1;
+#    # NSGlobalDomain
+#    NSGlobalDomain = {
+#        AppleShowAllExtensions = true;
+#        InitialKeyRepeat = 14;
+#        KeyRepeat = 1;
+#    }
   };
 
   # Used for backwards compatibility, please read the changelog before changing.
@@ -160,5 +143,4 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
-  };
 }
