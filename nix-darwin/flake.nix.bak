@@ -1,0 +1,24 @@
+{
+  description = "Example nix-darwin system flake";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-24.11-darwin";
+    nix-darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-24.11";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+  };
+
+  outputs = inputs@{ self, nix-darwin, nixpkgs }:
+  {
+    # 1. First-time installation:
+    # $ nix run nix-darwin -- switch --flake .#jhlee-macbook8
+    #
+    # 2. Subsequent rebuilds:
+    # $ darwin-rebuild switch --flake .#jhlee-macbook8
+    darwinConfigurations = {
+      "jhlee-macbook8" = nix-darwin.lib.darwinSystem {
+        modules = [ ./configuration.nix ];
+      };
+		};
+  darwinPackages = self.darwinConfigurations."jhlee-macbook8".pkgs;
+  };
+}

@@ -1,13 +1,55 @@
-{ config, lib, pkgs, ... }:
-
-{
+{ config, pkgs, ... }: {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
-    # Core Unix utilities (to ensure they're always available)
-    coreutils
-    findutils
-    gnupg
+    # Essential tools
+    vim
+    #neovim
+    git
+    curl
+    wget
+    htop
+    btop
+    tree
+    jq
+    yq
+
+    # DevOps/SRE/Cloud Engineering tools
+    kubectl
+    kubectx
+    k9s
+#    helm
+    terraform
+    terragrunt
+    ansible
+    docker
+    docker-compose
+    awscli2
+    azure-cli
+    google-cloud-sdk
+
+
+    # Monitoring and observability
+    prometheus
+    grafana
+
+    # Python and development
+    python3
+    python3Packages.pip
+    python3Packages.virtualenv
+    nodejs
+
+    # Network tools
+    nmap
+    dig
+    tcpdump
+
+    # Other useful tools
+    tmux
+    screen
+    rsync
+    unzip
+    zip
   ];
 
   # Homebrew integration
@@ -36,75 +78,52 @@
     ];
   };
 
-  # Fonts
-  fonts.packages = [
-    # Fonts are managed through home-manager
-  ];
+  services.nix-daemon.enable = true;
+  nix = {
+    package = pkgs.nix;
 
-  # System settings
-  system = {
-    defaults = {
-      dock = {
-        autohide = true;
-        orientation = "bottom";
-        showhidden = true;
-        minimize-to-application = true;
-      };
-      
-      finder = {
-        AppleShowAllExtensions = true;
-        AppleShowAllFiles = true;
-        ShowPathbar = true;
-        ShowStatusBar = true;
-      };
-      
-      NSGlobalDomain = {
-        AppleShowAllExtensions = true;
-        InitialKeyRepeat = 14;
-        KeyRepeat = 1;
-      };
+    # Necessary for using flakes on this system.
+    settings = {
+        experimental-features = "nix-command flakes";
+        trusted-users = [ "@admin" ];
     };
-    
-    keyboard = {
-      enableKeyMapping = true;
-      remapCapsLockToControl = true;
+
+    gc = {
+        automatic = true;
+        interval = { Weekday = 0; Hour = 2; Minute = 0; };
+        options = "--delete-older than 30d";
     };
   };
 
-  # Users configuration 
-  users.users.jhlee = {
-    name = "jhlee";
-    home = "/Users/jhlee";
-  };
+  # Enable alternative shell support in nix-darwin.
+  programs.zsh.enable = true;
 
-  # Set primary user for nix-darwin
-  system.primaryUser = "jhlee";
+
+  system.defaults = {
+    # dock
+
+  services.nix-daemon.enable = true;
 
   # Set the path to the darwin configuration
   environment.darwinConfig = "/Users/jhlee/sources/github.com/jholee/nix-config/etc/nix-darwin/configuration.nix";
 
-  # Home Manager integration (commented out - manage separately)
-  # imports = [
-  #   <home-manager/nix-darwin>
-  # ];
-
-  # home-manager = {
-  #   useGlobalPkgs = true;
-  #   useUserPackages = true;
-  #   users.jhlee = import ../../home/.config/nix/home.nix;
-  # };
-
   # Enable sudo authentication with Touch ID
   security.pam.services.sudo_local.touchIdAuth = true;
 
-  # nix-daemon is now managed automatically by nix-darwin
-  
   # Nix package manager settings
   nix = {
     package = pkgs.nix;
+
+    # Necessary for using flakes on this system.
     settings = {
       experimental-features = "nix-command flakes";
       trusted-users = [ "@admin" "jhlee" ];
+    };
+
+    gc = {
+        automatic = true;
+        interval = { Weekday = 0; Hour = 2; Minute = 0; };
+        options = "--delete-older than 30d";
     };
   };
 
@@ -117,8 +136,21 @@
     '';
   };
 
-  # Set Git commit hash for darwin-version.
-  system.configurationRevision = config.rev or config.dirtyRev or null;
+
+  system.defaults = {
+    # dock
+    dock.autohide = true;
+    dock.mru-spaces = false;
+
+    # finder
+    finder.AppleShowAllExtensions = true;
+    finder.FXPreferredViewStyle = "clmv";
+
+    # NSGlobalDomain
+#    NSGlobalDomain.AppleShowAllExtensions = true;
+#    NSGlobalDomain.InitialKeyRepeat = 14;
+#    NSGlobalDomain.KeyRepeat = 1;
+  };
 
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
@@ -126,4 +158,8 @@
 
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
 }
