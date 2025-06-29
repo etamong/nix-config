@@ -98,7 +98,6 @@
   # Enable alternative shell support in nix-darwin.
   programs.zsh.enable = true;
 
-
   system.defaults = {
     # dock
 
@@ -136,7 +135,6 @@
     '';
   };
 
-
   system.defaults = {
     # dock
     dock.autohide = true;
@@ -162,4 +160,5 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  };
 }
