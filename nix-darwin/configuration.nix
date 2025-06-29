@@ -5,13 +5,13 @@
     # Essential tools
     vim
     #neovim
-    git
-    curl
-    wget
-    htop
     btop
-    tree
+    curl
+    git
+    htop
     jq
+    tree
+    wget
     yq
 
     # DevOps/SRE/Cloud Engineering tools
