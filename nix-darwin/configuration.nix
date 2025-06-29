@@ -152,4 +152,12 @@
         home = "/Users/jhlee";
     };
   };
+
+  # https://mynixos.com/nix-darwin/option/security.pam.services.sudo_local.touchIdAuth
+  security.pam.enableSudoTouchIdAuth = true;
+#  security.pam.services = {
+#    sudo_local = {
+#      touchIdAuth = true;
+#    };
+#  };
 }
