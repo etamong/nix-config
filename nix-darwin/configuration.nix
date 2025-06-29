@@ -60,28 +60,30 @@
       autoUpdate = true;
       upgrade = true;
     };
-    
+
     taps = [
       # These taps are now included by default
     ];
-    
+
     brews = [
       # Add CLI tools here
     ];
-    
+
     casks = [
       "iterm2"
       "gitkraken"
-      "google-chrome" 
+      "google-chrome"
       "karabiner-elements"
       # Add GUI applications here
     ];
   };
 
-  services.nix-daemon.enable = true;
+  services = {
+    nix-daemon.enable = true;
+  };
 
   # Set the path to the darwin configuration
-  environment.darwinConfig = "/Users/jhlee/sources/github.com/jholee/nix-config/etc/nix-darwin/configuration.nix";
+  environment.darwinConfig = "/Users/jhlee/sources/github.com/jholee/nix-config/nix-darwin/configuration.nix";
 
 #  # Enable sudo authentication with Touch ID
 #  security.pam.services.sudo_local.touchIdAuth = true;
@@ -99,7 +101,7 @@
     gc = {
         automatic = true;
         interval = { Weekday = 0; Hour = 2; Minute = 0; };
-        options = "--delete-older than 30d";
+        options = "--delete-older-than 30d";
     };
   };
 
@@ -143,4 +145,11 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # Users
+  users.users = {
+    jhlee = {
+        name = "jhlee";
+        home = "/Users/jhlee";
+    };
+  };
 }
