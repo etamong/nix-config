@@ -50,6 +50,7 @@
     rsync
     unzip
     zip
+		raycast
   ];
 
   # Homebrew integration
@@ -74,6 +75,7 @@
       "gitkraken"
       "google-chrome"
       "karabiner-elements"
+			"claude"
       # Add GUI applications here
     ];
   };
