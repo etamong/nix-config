@@ -27,6 +27,8 @@
     vault
 
 		unstable.claude-code
+		jetbrains-toolbox
+		jetbrains.rust-rover
   ];
 
   home.file = {
