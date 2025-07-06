@@ -85,7 +85,7 @@
   };
 
   # Set the path to the darwin configuration
-  environment.darwinConfig = "/Users/jhlee/sources/github.com/jholee/nix-config/nix-darwin/configuration.nix";
+  environment.darwinConfig = "/Users/jhlee/sources/github.com/etamong/nix-config/nix-darwin/configuration.nix";
 
 #  # Enable sudo authentication with Touch ID
 #  security.pam.services.sudo_local.touchIdAuth = true;
