@@ -23,7 +23,7 @@ with lib;
         extended = true;
       };
       
-      initExtra = ''
+      initContent = ''
         if [[ -f ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]]; then
           source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
         fi

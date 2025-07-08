@@ -97,37 +97,29 @@
     system = "aarch64-darwin";
     username = "jhlee";
     
+    # Shared overlays for both darwin and home-manager
+    sharedOverlays = [
+      (final: prev: {
+        unstable = import nixpkgs-unstable {
+          inherit system;
+          config.allowUnfree = true;
+        };
+      })
+      (final: prev: {
+        saml2aws = saml2aws.packages.${system}.default;
+      })
+    ];
+    
     # Create a shared configuration with overlays
     sharedConfig = { pkgs, ... }: {
-      nixpkgs.overlays = [
-        (final: prev: {
-          unstable = import nixpkgs-unstable {
-            system = prev.system;
-            config.allowUnfree = true;
-          };
-        })
-        # Add saml2aws overlay
-        (final: prev: {
-          saml2aws = saml2aws.packages.${system}.default;
-        })
-      ];
+      nixpkgs.overlays = sharedOverlays;
     };
     
     # Create pkgs with overlays for home-manager
     pkgs = import nixpkgs {
       inherit system;
       config.allowUnfree = true;
-      overlays = [
-        (final: prev: {
-          unstable = import nixpkgs-unstable {
-            inherit system;
-            config.allowUnfree = true;
-          };
-        })
-        (final: prev: {
-          saml2aws = saml2aws.packages.${system}.default;
-        })
-      ];
+      overlays = sharedOverlays;
     };
     
     # Special args for all configurations
@@ -190,7 +182,5 @@
         ./home/jhlee.nix
       ];
     };
-    
-    darwinPackages = self.darwinConfigurations."jhlee-macbook8".pkgs;
   };
 }

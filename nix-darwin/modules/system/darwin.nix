@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   # Set the path to the darwin configuration
-  environment.darwinConfig = "/Users/jhlee/sources/github.com/etamong/nix-config/nix-darwin/configuration.nix";
+  environment.darwinConfig = "$HOME/sources/github.com/etamong/nix-config/nix-darwin/configuration.nix";
 
   # Nix package manager settings
   nix = {

@@ -3,7 +3,6 @@
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
     # Essential tools
-    vim
     btop
     curl
     git

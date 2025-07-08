@@ -4,6 +4,9 @@
 {
   # Darwin-specific user settings
   
-  # Example: system-level user configurations would go here
-  # For now, this is mostly empty since most user configs are in home-manager
+  # TouchID for sudo is configured in system/darwin.nix
+  # Most user configurations are in home-manager
+  
+  # System-level user shell configuration
+  programs.zsh.enable = true;
 }

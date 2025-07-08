@@ -13,7 +13,6 @@
     nerd-fonts.meslo-lg
     
     # Shell tools
-    zsh-powerlevel10k
     zsh-autosuggestions
     zsh-history-substring-search
     fzf
@@ -43,10 +42,26 @@
 
     ".npm-global/.keep".text = "";
 
-    # LazyVim configuration (간단화)
+    # Basic neovim configuration
     ".config/nvim/init.lua".text = ''
-      -- bootstrap lazy.nvim, LazyVim and your plugins
-      require("config.lazy")
+      -- Basic neovim configuration
+      vim.opt.number = true
+      vim.opt.relativenumber = true
+      vim.opt.tabstop = 2
+      vim.opt.shiftwidth = 2
+      vim.opt.expandtab = true
+      vim.opt.autoindent = true
+      vim.opt.smartindent = true
+      
+      -- Search settings
+      vim.opt.hlsearch = true
+      vim.opt.incsearch = true
+      vim.opt.ignorecase = true
+      vim.opt.smartcase = true
+      
+      -- Enable syntax highlighting
+      vim.cmd("syntax on")
+      vim.cmd("filetype plugin indent on")
     '';
   };
 
