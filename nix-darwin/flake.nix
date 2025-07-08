@@ -37,7 +37,27 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
-            home-manager.users.jhlee = import ./home.nix;
+            home-manager.users = {
+              jhlee = import ./home/jhlee.nix;
+            };
+          }
+        ];
+      };
+      "macbook-jooholee" = nix-darwin.lib.darwinSystem {
+        modules = [
+          ./configuration.nix
+          configuration
+          {
+            system.configurationRevision = self.rev or self.dirtyRev or null;
+            nixpkgs.hostPlatform = "aarch64-darwin";
+          }
+          home-manager.darwinModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users = {
+              jhlee = import ./home/jhlee.nix;
+            };
           }
         ];
       };
