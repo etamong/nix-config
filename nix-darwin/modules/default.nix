@@ -3,9 +3,7 @@
 {
   imports = [
     ./system
-    ./home
     ./themes
-    ./programs
     ./users
   ];
 }

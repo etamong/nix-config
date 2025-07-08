@@ -2,6 +2,6 @@
 { config, lib, pkgs, ... }:
 {
   imports = [
-    ./jhlee.nix
+    ./jhlee-darwin.nix
   ];
 }
