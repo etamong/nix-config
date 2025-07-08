@@ -2,5 +2,11 @@
 { config, lib, pkgs, ... }:
 
 {
-  # User-specific configurations will be moved here
+  # Enable program modules
+  programs.zsh.enablePowerlevel10k = true;
+  programs.dev-tools.enable = true;
+  programs.vim.enable = true;
+  
+  # User-specific theme selection
+  themes.selected = "nord";
 }

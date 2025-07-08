@@ -94,7 +94,11 @@
     vim-terraform,
   }:
   let
-    configuration = { pkgs, ... }: {
+    system = "aarch64-darwin";
+    username = "jhlee";
+    
+    # Create a shared configuration with overlays
+    sharedConfig = { pkgs, ... }: {
       nixpkgs.overlays = [
         (final: prev: {
           unstable = import nixpkgs-unstable {
@@ -102,28 +106,54 @@
             config.allowUnfree = true;
           };
         })
+        # Add saml2aws overlay
+        (final: prev: {
+          saml2aws = saml2aws.packages.${system}.default;
+        })
       ];
     };
-    username = "jhlee";
+    
+    # Create pkgs with overlays for home-manager
     pkgs = import nixpkgs {
-      system = "aarch64-darwin";
+      inherit system;
       config.allowUnfree = true;
+      overlays = [
+        (final: prev: {
+          unstable = import nixpkgs-unstable {
+            inherit system;
+            config.allowUnfree = true;
+          };
+        })
+        (final: prev: {
+          saml2aws = saml2aws.packages.${system}.default;
+        })
+      ];
+    };
+    
+    # Special args for all configurations
+    specialArgs = {
+      inherit username zsh-powerlevel10k;
+      inherit vim-nord vim-surround vim-commentary vim-easy-align fzf-vim vim-fugitive vim-nix vim-terraform vim-go;
+      inherit saml2aws;
     };
   in
   {
     darwinConfigurations = {
       "jhlee-macbook8" = nix-darwin.lib.darwinSystem {
+        inherit system;
+        specialArgs = specialArgs;
         modules = [
           ./configuration.nix
-          configuration
+          sharedConfig
           {
             system.configurationRevision = self.rev or self.dirtyRev or null;
-            nixpkgs.hostPlatform = "aarch64-darwin";
+            nixpkgs.hostPlatform = system;
           }
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = specialArgs;
             home-manager.users = {
               jhlee = import ./home/jhlee.nix;
             };
@@ -131,17 +161,20 @@
         ];
       };
       "macbook-jooholee" = nix-darwin.lib.darwinSystem {
+        inherit system;
+        specialArgs = specialArgs;
         modules = [
           ./configuration.nix
-          configuration
+          sharedConfig
           {
             system.configurationRevision = self.rev or self.dirtyRev or null;
-            nixpkgs.hostPlatform = "aarch64-darwin";
+            nixpkgs.hostPlatform = system;
           }
           home-manager.darwinModules.home-manager
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = specialArgs;
             home-manager.users = {
               jhlee = import ./home/jhlee.nix;
             };
@@ -152,11 +185,10 @@
     
     homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
       inherit pkgs;
-      extraSpecialArgs = {
-        inherit username zsh-powerlevel10k;
-        inherit vim-nord vim-surround vim-commentary vim-easy-align fzf-vim vim-fugitive vim-nix vim-terraform vim-go;
-        inherit saml2aws;
-      };
+      extraSpecialArgs = specialArgs;
+      modules = [
+        ./home/jhlee.nix
+      ];
     };
     
     darwinPackages = self.darwinConfigurations."jhlee-macbook8".pkgs;

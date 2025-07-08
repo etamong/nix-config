@@ -1,4 +1,5 @@
 # System-level configurations
+{ config, lib, pkgs, ... }:
 {
   imports = [
     ./darwin.nix

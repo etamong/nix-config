@@ -1,5 +1,5 @@
 # ZSH configuration module
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, zsh-powerlevel10k, ... }:
 
 with lib;
 
@@ -7,6 +7,60 @@ with lib;
   options.programs.zsh.enablePowerlevel10k = mkEnableOption "Powerlevel10k theme for ZSH";
 
   config = mkIf config.programs.zsh.enablePowerlevel10k {
-    # ZSH/Powerlevel10k configuration will be moved here
+    programs.zsh = {
+      enable = true;
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
+      historySubstringSearch.enable = true;
+      
+      history = {
+        path = "$HOME/.zsh_history";
+        size = 10000;
+        save = 10000;
+        share = true;
+        ignoreDups = true;
+        ignoreSpace = true;
+        extended = true;
+      };
+      
+      initExtra = ''
+        if [[ -f ~/.nix-profile/etc/profile.d/hm-session-vars.sh ]]; then
+          source ~/.nix-profile/etc/profile.d/hm-session-vars.sh
+        fi
+
+        source ${zsh-powerlevel10k}/powerlevel10k.zsh-theme
+        [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+        autoload -U +X bashcompinit && bashcompinit
+        autoload -U +X compinit && compinit
+
+        awslogin() {
+          saml2aws login --force --session-duration=43200 --disable-keychain
+        }
+
+        if [[ -f "$HOME/sources/github.com/devsisters/awsctx/shells/bash/awsctx.sh" ]]; then
+          source $HOME/sources/github.com/devsisters/awsctx/shells/bash/awsctx.sh
+        fi
+
+        vaultlogin() {
+          vault login -method=oidc > /dev/null
+        }
+
+        load_vault_envs() {
+          if command -v vaultctx >/dev/null 2>&1; then
+            export VAULT_ADDR=$(vaultctx get-addr 2>/dev/null || echo "https://vault.devsisters.cloud")
+          fi
+        }
+
+        typeset -a precmd_functions
+        precmd_functions+=(load_vault_envs)
+      '';
+      
+      shellAliases = {
+        chawsctx = "foo() { export AWS_PROFILE=$1; awsctx $2}; foo $1 $2";
+        python = "python3";
+        vaultctx = "~/.vaultctx/script";
+      };
+    };
   };
 }

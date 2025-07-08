@@ -7,6 +7,28 @@ with lib;
   options.programs.dev-tools.enable = mkEnableOption "Development tools configuration";
 
   config = mkIf config.programs.dev-tools.enable {
-    # Development tools configuration will be moved here
+    programs = {
+      direnv = {
+        enable = true;
+        enableBashIntegration = true;
+        nix-direnv.enable = true;
+      };
+
+      bash.enable = true;
+
+      fzf = {
+        enable = true;
+        enableZshIntegration = true;
+      };
+
+      lazygit.enable = true;
+
+      neovim = {
+        enable = true;
+        defaultEditor = true;
+        vimAlias = true;
+        viAlias = true;
+      };
+    };
   };
 }

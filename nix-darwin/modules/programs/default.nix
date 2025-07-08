@@ -1,4 +1,5 @@
 # Program-specific configurations
+{ config, lib, pkgs, ... }:
 {
   imports = [
     ./vim
