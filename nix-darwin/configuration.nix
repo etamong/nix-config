@@ -80,10 +80,6 @@
     ];
   };
 
-  services = {
-    nix-daemon.enable = true;
-  };
-
   # Set the path to the darwin configuration
   environment.darwinConfig = "/Users/jhlee/sources/github.com/etamong/nix-config/nix-darwin/configuration.nix";
 
@@ -141,6 +137,9 @@
   # $ darwin-rebuild changelog
   system.stateVersion = 5;
 
+  # Set primary user for homebrew and system defaults
+  system.primaryUser = "jhlee";
+
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
 
@@ -156,10 +155,9 @@
   };
 
   # https://mynixos.com/nix-darwin/option/security.pam.services.sudo_local.touchIdAuth
-  security.pam.enableSudoTouchIdAuth = true;
-#  security.pam.services = {
-#    sudo_local = {
-#      touchIdAuth = true;
-#    };
-#  };
+  security.pam.services = {
+    sudo_local = {
+      touchIdAuth = true;
+    };
+  };
 }

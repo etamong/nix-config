@@ -1,5 +1,4 @@
 { config, pkgs, ... }: {
-  nixpkgs.config.allowUnfree = true;
   
   home.username = "jhlee";
   home.homeDirectory = "/Users/jhlee";
@@ -8,8 +7,10 @@
   home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
-    # Nerd Fonts - 24.11 호환 구문
-    (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" "Meslo" ]; })
+    # Nerd Fonts - Updated syntax
+    nerd-fonts.fira-code
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.meslo-lg
     
     # Shell tools
     zsh-powerlevel10k
