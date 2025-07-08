@@ -104,6 +104,11 @@
         })
       ];
     };
+    username = "jhlee";
+    pkgs = import nixpkgs {
+      system = "aarch64-darwin";
+      config.allowUnfree = true;
+    };
   in
   {
     darwinConfigurations = {
@@ -144,6 +149,16 @@
         ];
       };
     };
+    
+    homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
+      inherit pkgs;
+      extraSpecialArgs = {
+        inherit username zsh-powerlevel10k;
+        inherit vim-nord vim-surround vim-commentary vim-easy-align fzf-vim vim-fugitive vim-nix vim-terraform vim-go;
+        inherit saml2aws;
+      };
+    };
+    
     darwinPackages = self.darwinConfigurations."jhlee-macbook8".pkgs;
   };
 }
