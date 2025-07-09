@@ -3,7 +3,14 @@ Always include newline at the EOF.
 
 ### How to Run Darwin Rebuild
 ```shell
-darwin-rebuild switch --flake $PATH_TO_CURRENT_DIRECTORY/nix-darwin#$(hostname)
+# Build configuration (can run without sudo since jhlee is trusted user)
+nix build .#darwinConfigurations.$(hostname).system
+
+# Apply configuration (requires sudo for system activation)
+sudo darwin-rebuild switch --flake $PATH_TO_CURRENT_DIRECTORY/nix-darwin#$(hostname)
+
+# Or combine both steps
+sudo darwin-rebuild switch --flake .#$(hostname)
 ```
 
 ### Configuration Structure

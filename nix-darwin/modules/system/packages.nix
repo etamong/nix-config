@@ -6,6 +6,7 @@
     btop
     curl
     git
+    gnupg
     htop
     jq
     tree
