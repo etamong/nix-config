@@ -136,6 +136,7 @@
     };
   in
   {
+    
     darwinConfigurations = {
       "jhlee-macbook8" = nix-darwin.lib.darwinSystem {
         inherit system;

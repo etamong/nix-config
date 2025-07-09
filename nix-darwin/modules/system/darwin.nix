@@ -17,6 +17,20 @@
       build-users-group = "nixbld";
     };
 
+    # Add flake registry for easier rebuilds
+    registry = {
+      darwin.flake = {
+        type = "path";
+        path = "/Users/jhlee/sources/github.com/etamong/nix-config/nix-darwin";
+      };
+    };
+
+    # Set nixPath to enable legacy commands without flake reference
+    nixPath = [
+      "darwin-config=/Users/jhlee/sources/github.com/etamong/nix-config/nix-darwin"
+      "darwin=/Users/jhlee/sources/github.com/etamong/nix-config/nix-darwin"
+    ];
+
     gc = {
       automatic = true;
       interval = { Weekday = 0; Hour = 2; Minute = 0; };
