@@ -345,7 +345,7 @@ with lib;
       podman-socket-info = "podman system connection list";
 
       # Podman socket proxy for testcontainers
-      podman-socket-start = "rm -f /tmp/podman.sock && ssh -o StrictHostKeyChecking=no -i ~/.local/share/containers/podman/machine/machine -L /tmp/podman.sock:/run/user/504/podman/podman.sock -N core@127.0.0.1 -p 54674 &";
+      podman-socket-start = "MACHINE_NAME=$(podman machine list --format=\"{{.Name}}\" | grep \"\\*\" | sed \"s/\\*//\") && PORT=$(podman machine inspect $MACHINE_NAME | jq -r \".[0].SSHConfig.Port\") && rm -f /tmp/podman.sock && ssh -o StrictHostKeyChecking=no -i ~/.local/share/containers/podman/machine/machine -L /tmp/podman.sock:/run/user/504/podman/podman.sock -N core@127.0.0.1 -p $PORT &";
       podman-socket-stop = "pkill -f 'ssh.*podman.sock' && rm -f /tmp/podman.sock";
 
       # Docker compatibility alias for podman
@@ -379,8 +379,8 @@ with lib;
       pip = "uv pip";
 
       # Darwin rebuild shortcuts
-      darwin-rebuild = "sudo darwin-rebuild switch --flake ~/sources/github.com/etamong/nix-config/nix-darwin#$(hostname)";
-      darwin-rebuild-check = "sudo darwin-rebuild check --flake ~/sources/github.com/etamong/nix-config/nix-darwin#$(hostname)";
+      darwin-switch = "sudo darwin-rebuild switch --flake ~/sources/github.com/etamong/nix-config/nix-darwin#$(hostname)";
+      darwin-check = "sudo darwin-rebuild check --flake ~/sources/github.com/etamong/nix-config/nix-darwin#$(hostname)";
     };
   };
 
