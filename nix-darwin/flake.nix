@@ -141,7 +141,7 @@
         inherit system;
         specialArgs = specialArgs;
         modules = [
-          ./configuration.nix
+          ./modules/darwin
           sharedConfig
           {
             system.configurationRevision = self.rev or self.dirtyRev or null;
@@ -162,7 +162,7 @@
         inherit system;
         specialArgs = specialArgs;
         modules = [
-          ./configuration.nix
+          ./modules/darwin
           sharedConfig
           {
             system.configurationRevision = self.rev or self.dirtyRev or null;
