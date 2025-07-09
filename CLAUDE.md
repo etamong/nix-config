@@ -11,6 +11,13 @@ sudo darwin-rebuild switch --flake $PATH_TO_CURRENT_DIRECTORY/nix-darwin#$(hostn
 
 # Or combine both steps
 sudo darwin-rebuild switch --flake .#$(hostname)
+
+# Check configuration without applying (dry-run)
+darwin-rebuild check --flake .#$(hostname)
+
+# Convenient aliases (defined in nix-darwin/modules/zsh/default.nix)
+# darwin-rebuild - Apply configuration with switch
+# darwin-rebuild-check - Check configuration without applying
 ```
 
 ### Configuration Structure
