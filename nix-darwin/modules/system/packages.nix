@@ -22,6 +22,7 @@
     ansible
     docker
     docker-compose
+    podman
     awscli2
     azure-cli
     google-cloud-sdk
