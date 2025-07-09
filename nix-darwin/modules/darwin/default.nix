@@ -2,6 +2,7 @@
 
 {
   imports = [
-    ./modules/darwin
+    ../system
+    ../users
   ];
 }

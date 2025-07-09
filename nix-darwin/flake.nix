@@ -27,6 +27,11 @@
       flake = false;
     };
 
+    zsh-autopair = {
+      url = "github:hlissner/zsh-autopair";
+      flake = false;
+    };
+
     ## Vim Plugins
     vim-nord = {
       url = "github:arcticicestudio/nord-vim";
@@ -82,6 +87,7 @@
     nixpkgs-unstable,
     saml2aws,
     zsh-powerlevel10k,
+    zsh-autopair,
     ## Vim Plugins
     fzf-vim,
     vim-commentary,
@@ -124,7 +130,7 @@
     
     # Special args for all configurations
     specialArgs = {
-      inherit username zsh-powerlevel10k;
+      inherit username zsh-powerlevel10k zsh-autopair;
       inherit vim-nord vim-surround vim-commentary vim-easy-align fzf-vim vim-fugitive vim-nix vim-terraform vim-go;
       inherit saml2aws;
     };
