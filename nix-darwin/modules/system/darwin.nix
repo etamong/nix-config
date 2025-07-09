@@ -1,6 +1,6 @@
 { config, pkgs, ... }: {
   # Set the path to the darwin configuration
-  environment.darwinConfig = "$HOME/sources/github.com/etamong/nix-config/nix-darwin/configuration.nix";
+  environment.darwinConfig = "$HOME/sources/github.com/etamong/nix-config/nix-darwin";
 
   # Nix package manager settings
   nix = {
@@ -9,7 +9,12 @@
     # Necessary for using flakes on this system.
     settings = {
       experimental-features = "nix-command flakes";
-      trusted-users = [ "@admin" "jhlee" ];
+      trusted-users = [ "@admin" "jhlee" "root" ];
+      # Allow jhlee to run nix commands
+      allowed-users = [ "@admin" "jhlee" "root" ];
+      # Enable user namespace for non-root builds
+      sandbox = true;
+      build-users-group = "nixbld";
     };
 
     gc = {
