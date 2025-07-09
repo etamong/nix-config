@@ -47,6 +47,7 @@
     screen
     rsync
     unzip
+    watch
     zip
     raycast
   ];
