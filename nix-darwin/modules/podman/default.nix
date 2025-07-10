@@ -1,219 +1,187 @@
 { config, lib, pkgs, ... }:
 
 let
-  # Podman socket management scripts
-  podman-socket-start = pkgs.writeScriptBin "podman-socket-start" ''
-    #!${pkgs.bash}/bin/bash
+  # Podman socket start script
+  podmanSocketStart = pkgs.writeShellScriptBin "podman-socket-start" ''
+    #!/usr/bin/env bash
     set -e
-
-    SOCKET_PATH="/tmp/podman.sock"
-    MAX_RETRIES=3
-    RETRY_DELAY=2
-
-    # Clean up existing socket
-    rm -f "$SOCKET_PATH"
-
-    # Kill any existing SSH connections to podman socket
-    pkill -f "ssh.*podman.sock" || true
-
-    # Get the running podman machine name and SSH port
-    MACHINE_NAME=$(podman machine list --format="{{.Name}}" | grep "\\*" | sed "s/\\*//")
-    if [ -z "$MACHINE_NAME" ]; then
-      echo "No running podman machine found. Starting default machine..."
-      podman machine start
-      sleep 5
-      MACHINE_NAME=$(podman machine list --format="{{.Name}}" | grep "\\*" | sed "s/\\*//")
-    fi
-
-    if [ -z "$MACHINE_NAME" ]; then
-      echo "Failed to start podman machine"
-      exit 1
-    fi
-
-    PORT=$(podman machine inspect "$MACHINE_NAME" | jq -r ".[0].SSHConfig.Port")
-    if [ -z "$PORT" ] || [ "$PORT" = "null" ]; then
-      echo "Failed to get SSH port for machine $MACHINE_NAME"
-      exit 1
-    fi
-
-    echo "Starting podman socket proxy for machine: $MACHINE_NAME on port: $PORT"
-
-    # Retry SSH connection with network interface reset
-    for i in $(seq 1 $MAX_RETRIES); do
-      echo "Attempt $i/$MAX_RETRIES: Establishing SSH connection..."
-
-      # Reset network interface if this is not the first attempt
-      if [ $i -gt 1 ]; then
-        echo "Resetting network interface..."
-        # Try to reset the primary network interface on macOS
-        PRIMARY_INTERFACE=$(route get default | grep interface | awk '{print $2}')
-        if [ -n "$PRIMARY_INTERFACE" ]; then
-          sudo ifconfig "$PRIMARY_INTERFACE" down 2>/dev/null || true
-          sleep 1
-          sudo ifconfig "$PRIMARY_INTERFACE" up 2>/dev/null || true
-          sleep 2
-        fi
-      fi
-
-      # Try SSH connection
-      if ssh -o StrictHostKeyChecking=no \
-             -o ConnectTimeout=10 \
-             -o ServerAliveInterval=60 \
-             -o ServerAliveCountMax=3 \
-             -o ControlMaster=auto \
-             -o ControlPath="/tmp/podman-ssh-control-%r@%h:%p" \
-             -o ControlPersist=600 \
-             -i ~/.local/share/containers/podman/machine/machine \
-             -L "$SOCKET_PATH:/run/user/$(id -u)/podman/podman.sock" \
-             -N core@127.0.0.1 -p "$PORT" &
-      then
-        sleep 3
-        if [ -S "$SOCKET_PATH" ]; then
-          echo "Podman socket proxy started successfully"
-          echo "Socket available at: $SOCKET_PATH"
-          exit 0
-        fi
-      fi
-
-      # Clean up failed attempt
-      pkill -f "ssh.*podman.sock" || true
-      rm -f "$SOCKET_PATH"
-
-      if [ $i -lt $MAX_RETRIES ]; then
-        echo "SSH connection failed, retrying in $RETRY_DELAY seconds..."
-        sleep $RETRY_DELAY
-      fi
-    done
-
-    echo "Failed to establish SSH connection after $MAX_RETRIES attempts"
-    echo "Attempting to restart podman machine as last resort..."
-
-    podman machine stop "$MACHINE_NAME" || true
-    sleep 2
-    podman machine start "$MACHINE_NAME" || true
-    sleep 5
-
-    # Final attempt after machine restart
-    PORT=$(podman machine inspect "$MACHINE_NAME" | jq -r ".[0].SSHConfig.Port")
-    ssh -o StrictHostKeyChecking=no \
-        -o ConnectTimeout=10 \
-        -i ~/.local/share/containers/podman/machine/machine \
-        -L "$SOCKET_PATH:/run/user/$(id -u)/podman/podman.sock" \
-        -N core@127.0.0.1 -p "$PORT" &
-
-    sleep 3
-    if [ -S "$SOCKET_PATH" ]; then
-      echo "Podman socket proxy started successfully after machine restart"
-      echo "Socket available at: $SOCKET_PATH"
-    else
-      echo "Failed to start podman socket proxy"
-      exit 1
-    fi
-  '';
-
-  podman-socket-stop = pkgs.writeScriptBin "podman-socket-stop" ''
-    #!${pkgs.bash}/bin/bash
-
-    echo "Stopping podman socket proxy..."
-
-    # Kill SSH processes
-    pkill -f "ssh.*podman.sock" || true
-
-    # Clean up socket file
+    
     rm -f /tmp/podman.sock
-
-    # Clean up SSH control sockets
-    rm -f /tmp/podman-ssh-control-*
-
-    echo "Podman socket proxy stopped"
+    
+    CONNECTION_URI=$(podman system connection list --format='{{.URI}}' | head -1)
+    
+    if [[ $CONNECTION_URI =~ ssh://([^@]+)@([^:]+):([0-9]+)(.*) ]]; then
+      USER="''${BASH_REMATCH[1]}"
+      HOST="''${BASH_REMATCH[2]}"
+      PORT="''${BASH_REMATCH[3]}"
+      REMOTE_SOCKET="''${BASH_REMATCH[4]}"
+      
+      echo "Waiting for SSH to be ready..."
+      
+      # Wait for SSH to be ready (up to 10 seconds)
+      SSH_READY=false
+      for i in {1..3}; do
+        if timeout 2 ssh -o StrictHostKeyChecking=no \
+            -o ConnectTimeout=2 \
+            -i ~/.local/share/containers/podman/machine/machine \
+            "$USER@$HOST" -p "$PORT" echo "SSH ready" >/dev/null 2>&1; then
+          echo "SSH connection established"
+          SSH_READY=true
+          break
+        fi
+        echo "SSH not ready, waiting... ($i/3)"
+        sleep 2
+      done
+      
+      # If SSH still not ready, try to fix the network interface
+      if [ "$SSH_READY" = false ]; then
+        echo "SSH connection failed, attempting network interface reset..."
+        
+        # Try to reset network interface using podman machine ssh
+        if podman machine ssh -- 'sudo ip link set enp0s1 down && sudo ip link set enp0s1 up' >/dev/null 2>&1; then
+          echo "Reset network interface enp0s1"
+          sleep 3
+          
+          # Check if SSH is working now
+          if timeout 2 ssh -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=2 \
+              -i ~/.local/share/containers/podman/machine/machine \
+              "$USER@$HOST" -p "$PORT" echo "SSH ready" >/dev/null 2>&1; then
+            echo "SSH connection restored after network reset"
+            SSH_READY=true
+          fi
+        fi
+        
+        # If still not working, restart the machine as last resort
+        if [ "$SSH_READY" = false ]; then
+          echo "Network reset failed, restarting Podman machine..."
+          podman machine stop >/dev/null 2>&1 || true
+          sleep 3
+          podman machine start >/dev/null 2>&1
+          sleep 5
+          
+          # Try SSH one more time after machine restart
+          if timeout 5 ssh -o StrictHostKeyChecking=no \
+              -o ConnectTimeout=5 \
+              -i ~/.local/share/containers/podman/machine/machine \
+              "$USER@$HOST" -p "$PORT" echo "SSH ready" >/dev/null 2>&1; then
+            echo "SSH connection established after machine restart"
+            SSH_READY=true
+          else
+            echo "SSH connection failed even after machine restart"
+            exit 1
+          fi
+        fi
+      fi
+      
+      echo "Starting socket tunnel..."
+      ssh -o StrictHostKeyChecking=no \
+          -o ControlPath=/tmp/podman-ssh-control \
+          -o ControlMaster=yes \
+          -i ~/.local/share/containers/podman/machine/machine \
+          -L /tmp/podman.sock:"$REMOTE_SOCKET" \
+          -N "$USER@$HOST" -p "$PORT" &
+      
+      sleep 2
+      if [ -S /tmp/podman.sock ]; then
+        echo "Podman socket started successfully at /tmp/podman.sock"
+      else
+        echo "Socket start failed - SSH tunnel may not be working"
+        exit 1
+      fi
+    else
+      echo "Failed to get Podman connection URI"
+      exit 1
+    fi
   '';
 
-  podman-socket-restart = pkgs.writeScriptBin "podman-socket-restart" ''
-    #!${pkgs.bash}/bin/bash
+  # Podman socket stop script
+  podmanSocketStop = pkgs.writeShellScriptBin "podman-socket-stop" ''
+    #!/usr/bin/env bash
+    set -e
+    
+    # Try graceful shutdown using SSH control socket
+    if [ -e /tmp/podman-ssh-control ]; then
+      ssh -o ControlPath=/tmp/podman-ssh-control -O exit dummy 2>/dev/null || true
+      sleep 1
+    fi
+    
+    # Fallback to pkill if process still exists
+    pkill -f 'ssh.*podman.sock' 2>/dev/null || true
+    
+    # Clean up files
+    rm -f /tmp/podman.sock /tmp/podman-ssh-control
+    
+    echo "Podman socket stopped"
+  '';
 
-    echo "Restarting podman socket proxy..."
-    ${podman-socket-stop}/bin/podman-socket-stop
+  # Podman socket restart script
+  podmanSocketRestart = pkgs.writeShellScriptBin "podman-socket-restart" ''
+    #!/usr/bin/env bash
+    set -e
+    
+    echo "Restarting Podman socket..."
+    
+    # Stop the socket
+    ${podmanSocketStop}/bin/podman-socket-stop
+    
+    # Wait a moment for cleanup
     sleep 2
-    ${podman-socket-start}/bin/podman-socket-start
+    
+    # Start the socket
+    ${podmanSocketStart}/bin/podman-socket-start
   '';
 
-  podman-socket-status = pkgs.writeScriptBin "podman-socket-status" ''
-    #!${pkgs.bash}/bin/bash
-
-    SOCKET_PATH="/tmp/podman.sock"
-
+  # Podman socket status script
+  podmanSocketStatus = pkgs.writeShellScriptBin "podman-socket-status" ''
+    #!/usr/bin/env bash
+    
     echo "=== Podman Socket Status ==="
-
+    
     # Check if socket file exists
-    if [ -S "$SOCKET_PATH" ]; then
-      echo "✓ Socket file exists: $SOCKET_PATH"
+    if [ -S /tmp/podman.sock ]; then
+      echo "✓ Socket file exists: /tmp/podman.sock"
     else
-      echo "✗ Socket file missing: $SOCKET_PATH"
+      echo "✗ Socket file not found: /tmp/podman.sock"
     fi
-
-    # Check SSH processes
-    SSH_PROCESSES=$(pgrep -f "ssh.*podman.sock" || echo "")
-    if [ -n "$SSH_PROCESSES" ]; then
-      echo "✓ SSH tunnel processes running: $SSH_PROCESSES"
+    
+    # Check SSH tunnel
+    if pgrep -f 'ssh.*podman.sock' > /dev/null; then
+      echo "✓ SSH tunnel is running"
+      echo "  PID: $(pgrep -f 'ssh.*podman.sock')"
     else
-      echo "✗ No SSH tunnel processes found"
+      echo "✗ SSH tunnel not running"
     fi
-
-    # Check podman machine status
-    echo ""
+    
+    # Check Podman machine status
+    echo
     echo "=== Podman Machine Status ==="
     podman machine list
-
-    # Check podman system connection
-    echo ""
-    echo "=== Podman System Connections ==="
+    
+    echo
+    echo "=== Podman Connections ==="
     podman system connection list
-
-    # Test socket connectivity
-    echo ""
-    echo "=== Socket Connectivity Test ==="
-    if [ -S "$SOCKET_PATH" ]; then
-      if timeout 5 podman --remote version >/dev/null 2>&1; then
-        echo "✓ Socket is responding to podman commands"
-      else
-        echo "✗ Socket exists but not responding to podman commands"
-      fi
-    else
-      echo "✗ Cannot test socket - file does not exist"
-    fi
-
-    # Environment variables
-    echo ""
+    
+    # Check environment variables
+    echo
     echo "=== Environment Variables ==="
-    echo "DOCKER_HOST: $DOCKER_HOST"
-    echo "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: $TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE"
-    echo "TESTCONTAINERS_PODMAN_SOCKET_OVERRIDE: $TESTCONTAINERS_PODMAN_SOCKET_OVERRIDE"
-    echo "TESTCONTAINERS_RYUK_DISABLED: $TESTCONTAINERS_RYUK_DISABLED"
+    echo "DOCKER_HOST: ''${DOCKER_HOST:-not set}"
+    echo "TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE: ''${TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE:-not set}"
+    echo "TESTCONTAINERS_RYUK_DISABLED: ''${TESTCONTAINERS_RYUK_DISABLED:-not set}"
   '';
 
-  podman-socket-management = pkgs.buildEnv {
-    name = "podman-socket-management";
+  # Package everything together
+  podmanSocketPackage = pkgs.symlinkJoin {
+    name = "podman-socket-manager";
     paths = [
-      podman-socket-start
-      podman-socket-stop
-      podman-socket-restart
-      podman-socket-status
+      podmanSocketStart
+      podmanSocketStop
+      podmanSocketRestart
+      podmanSocketStatus
     ];
   };
-
 in
 {
-  # Add podman socket management scripts to home packages
-  home.packages = [
-    podman-socket-management
-  ];
-
-  # Set environment variables for podman/docker compatibility
-  home.sessionVariables = {
-    DOCKER_HOST = "unix:///tmp/podman.sock";
-    TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE = "/tmp/podman.sock";
-    TESTCONTAINERS_PODMAN_SOCKET_OVERRIDE = "/tmp/podman.sock";
-    TESTCONTAINERS_RYUK_DISABLED = "true";
-  };
+  # Add the podman socket management package to home packages
+  home.packages = [ podmanSocketPackage ];
 }
-
