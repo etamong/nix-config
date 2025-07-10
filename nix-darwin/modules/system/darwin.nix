@@ -76,12 +76,4 @@
     };
   };
 
-  # Enable podman socket service
-  launchd.user.agents.podman = {
-    command = "${pkgs.podman}/bin/podman system service --time=0 unix:///Users/jhlee/.local/share/containers/podman/machine/podman-machine-default/podman.sock";
-    serviceConfig = {
-      KeepAlive = true;
-      RunAtLoad = true;
-    };
-  };
 }

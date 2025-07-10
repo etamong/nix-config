@@ -344,9 +344,11 @@ with lib;
       podman-status = "podman machine list";
       podman-socket-info = "podman system connection list";
 
-      # Podman socket proxy for testcontainers
-      podman-socket-start = "MACHINE_NAME=$(podman machine list --format=\"{{.Name}}\" | grep \"\\*\" | sed \"s/\\*//\") && PORT=$(podman machine inspect $MACHINE_NAME | jq -r \".[0].SSHConfig.Port\") && rm -f /tmp/podman.sock && ssh -o StrictHostKeyChecking=no -i ~/.local/share/containers/podman/machine/machine -L /tmp/podman.sock:/run/user/504/podman/podman.sock -N core@127.0.0.1 -p $PORT &";
-      podman-socket-stop = "pkill -f 'ssh.*podman.sock' && rm -f /tmp/podman.sock";
+      # Podman socket management (robust version)
+      podman-socket-start = "podman-socket-start";
+      podman-socket-stop = "podman-socket-stop";
+      podman-socket-restart = "podman-socket-restart";
+      podman-socket-status = "podman-socket-status";
 
       # Docker compatibility alias for podman
       docker = "podman";
