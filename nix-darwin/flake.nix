@@ -138,7 +138,7 @@
   {
     
     darwinConfigurations = {
-      "jhlee-macbook8" = nix-darwin.lib.darwinSystem {
+      "etamong-macbook8" = nix-darwin.lib.darwinSystem {
         inherit system;
         specialArgs = specialArgs;
         modules = [
