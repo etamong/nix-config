@@ -332,6 +332,7 @@ with lib;
       gsur = "echo 'git submodule update --recursive' && git submodule update --recursive";
       grhh = "echo 'git reset --hard HEAD' && git reset --hard HEAD";
       gprr = "echo 'git pull --rebase' && git pull --rebase";
+      lg = "lazygit"; # Lazygit 
 
       # Podman aliases
       pp = "echo 'podman ps' && podman ps";
