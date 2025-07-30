@@ -162,6 +162,12 @@ with lib;
           export PATH="$HOME/.krew/bin:$PATH"
         fi
 
+        # Shell - functions for switch directory
+        function cds() { cd $HOME/sources/"$@"; }
+        function cdsd() { cds github.com/devsisters/"$@"; }
+        function cdse() { cds github.com/etamong/"$@"; }
+        
+
         # GPG configuration
         export GPG_TTY=$(tty)
 
