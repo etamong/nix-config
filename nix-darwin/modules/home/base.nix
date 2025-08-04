@@ -11,7 +11,7 @@
     nerd-fonts.fira-code
     nerd-fonts.jetbrains-mono
     nerd-fonts.meslo-lg
-    
+
     # Shell tools
     zsh-autosuggestions
     zsh-history-substring-search

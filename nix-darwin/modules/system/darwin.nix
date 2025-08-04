@@ -60,6 +60,9 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+  
+  # Allow broken packages (needed for ghostty)
+  nixpkgs.config.allowBroken = true;
 
   # Users
   users.users = {
