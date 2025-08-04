@@ -152,6 +152,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.users = {
               jhlee = import ./home/jhlee.nix;
@@ -173,6 +174,7 @@
           {
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
+            home-manager.backupFileExtension = "backup";
             home-manager.extraSpecialArgs = specialArgs;
             home-manager.users = {
               jhlee = import ./home/jhlee.nix;
