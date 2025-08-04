@@ -21,7 +21,14 @@ with lib;
         enableZshIntegration = true;
       };
 
-      lazygit.enable = true;
+      lazygit = {
+        enable = true;
+        settings = {
+          git = {
+            overrideGpg = true;
+          };
+        };
+      };
 
       neovim = {
         enable = true;

@@ -22,6 +22,7 @@
       "google-chrome"
       "karabiner-elements"
       "claude"
+      "ghostty"
       # Add GUI applications here
     ];
   };
