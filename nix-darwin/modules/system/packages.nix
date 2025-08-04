@@ -50,5 +50,8 @@
     watch
     zip
     raycast
+    
+    # Terminal emulator
+    ghostty
   ];
 }
