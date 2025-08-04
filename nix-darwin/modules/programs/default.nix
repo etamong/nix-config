@@ -5,5 +5,6 @@
     ./zsh
     ./git
     ./dev-tools
+    ./iterm2
   ];
 }
