@@ -6,5 +6,6 @@
     ./git
     ./dev-tools
     ./iterm2
+    ./ghostty
   ];
 }
