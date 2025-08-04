@@ -16,6 +16,9 @@
     zsh-autosuggestions
     zsh-history-substring-search
     fzf
+        
+    # Sarasa Gothic font
+    sarasa-gothic
     
     # Development tools
     gh
