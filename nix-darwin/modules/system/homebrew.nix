@@ -13,7 +13,7 @@
     ];
 
     brews = [
-      # Add CLI tools here
+      "imagemagick" # image converter
     ];
 
     casks = [

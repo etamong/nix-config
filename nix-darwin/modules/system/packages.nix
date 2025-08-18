@@ -9,6 +9,7 @@
     gnupg
     htop
     jq
+    ncdu
     ripgrep
     tree
     wget
