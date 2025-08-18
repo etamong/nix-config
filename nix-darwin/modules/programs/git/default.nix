@@ -15,6 +15,10 @@ with lib;
         pull.rebase = true;
         core.editor = "nvim";
         
+        # Enable rerere (reuse recorded resolution)
+        rerere.enabled = true;
+        rerere.autoupdate = true;
+        
         # Better diff and merge tools
         diff.tool = "vimdiff";
         merge.tool = "vimdiff";
@@ -28,6 +32,7 @@ with lib;
           unstage = "reset HEAD --";
           last = "log -1 HEAD";
           visual = "!gitk";
+          rere = "rerere";
         };
       };
     };
