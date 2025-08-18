@@ -9,6 +9,7 @@
     gnupg
     htop
     jq
+    ripgrep
     tree
     wget
     yq
