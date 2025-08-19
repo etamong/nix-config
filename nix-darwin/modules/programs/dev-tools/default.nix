@@ -26,6 +26,7 @@ with lib;
         settings = {
           git = {
             overrideGpg = true;
+            autoStageResolvedConflicts = false;
           };
         };
       };
