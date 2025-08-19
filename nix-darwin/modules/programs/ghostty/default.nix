@@ -11,8 +11,8 @@
       font-style-bold-italic = "Bold Italic"
       font-size = 14
       
-      # Split behavior
-      new-split-inherits-working-directory = false
+      # Window behavior
+      window-inherit-working-directory = false
     '';
   };
 }
