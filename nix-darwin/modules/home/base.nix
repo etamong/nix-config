@@ -24,6 +24,7 @@
     gh
     awscli2
     go
+    gotestsum
     nodejs
     python3
     saml2aws

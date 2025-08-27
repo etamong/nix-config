@@ -28,6 +28,7 @@
     awscli2
     azure-cli
     google-cloud-sdk
+    teleport
 
     # Monitoring and observability
     prometheus
