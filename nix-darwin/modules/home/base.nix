@@ -27,7 +27,7 @@
     gotestsum
     nodejs
     python3
-    saml2aws
+    saml2aws 
     vault
 
     unstable.claude-code
