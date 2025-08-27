@@ -16,6 +16,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Custom saml2aws build from devsisters fork
+    saml2aws = {
+      url = "github:devsisters/saml2aws";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     zsh-powerlevel10k = {
       url = "github:romkatv/powerlevel10k/v1.19.0";
       flake = false;
