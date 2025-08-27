@@ -7,5 +7,6 @@
     ./dev-tools
     ./iterm2
     ./ghostty
+    ./awsctx
   ];
 }
