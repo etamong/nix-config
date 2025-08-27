@@ -54,9 +54,6 @@ with lib;
 
         typeset -a precmd_functions
         precmd_functions+=(load_vault_envs)
-
-        # Execute chawsctx saml infra at the end of shell initialization
-        chawsctx saml infra
       '';
       
       shellAliases = {
@@ -64,6 +61,11 @@ with lib;
         python = "python3";
         vaultctx = "~/.vaultctx/script";
       };
+
+      initExtra = ''
+        # Execute chawsctx saml infra at the end of shell initialization
+        chawsctx saml infra
+      '';
     };
   };
 }
