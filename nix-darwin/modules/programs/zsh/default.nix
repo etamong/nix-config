@@ -54,18 +54,16 @@ with lib;
 
         typeset -a precmd_functions
         precmd_functions+=(load_vault_envs)
+
+        # Define and execute chawsctx saml infra at the end of shell initialization
+        chawsctx() { export AWS_PROFILE=$1; awsctx $2; }
+        chawsctx saml infra
       '';
       
       shellAliases = {
-        chawsctx = "foo() { export AWS_PROFILE=$1; awsctx $2}; foo $1 $2";
         python = "python3";
         vaultctx = "~/.vaultctx/script";
       };
-
-      initExtra = ''
-        # Execute chawsctx saml infra at the end of shell initialization
-        chawsctx saml infra
-      '';
     };
   };
 }
