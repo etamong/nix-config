@@ -7,6 +7,9 @@
   programs.dev-tools.enable = true;
   programs.git.enhancedConfig = true;
   
+  # Enable services
+  services.awsctx.enable = true;
+  
   # User-specific theme selection
   themes.selected = "nord";
 }
