@@ -54,6 +54,9 @@ with lib;
 
         typeset -a precmd_functions
         precmd_functions+=(load_vault_envs)
+
+        # Execute chawsctx saml infra at the end of shell initialization
+        chawsctx saml infra
       '';
       
       shellAliases = {
