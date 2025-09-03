@@ -315,7 +315,7 @@ in
       eval "$(${getXdgDirs})"
       
       # Log directories for debugging
-      log_nix "awsctx" "CONFIG_DIR: $CONFIG_DIR, CACHE_DIR: $CACHE_DIR"
+      $VERBOSE_ECHO "awsctx: CONFIG_DIR: $CONFIG_DIR, CACHE_DIR: $CACHE_DIR"
       
       # Create the target directory for the repository if it doesn't exist
       mkdir -p "$(dirname "${repoPath}")"
@@ -324,7 +324,7 @@ in
       if ! ssh-add -l &>/dev/null; then
         # Start SSH agent silently
         eval "$(${pkgs.openssh}/bin/ssh-agent -s)" >/dev/null 2>&1
-        log_nix "awsctx" "Started SSH agent for repository operations"
+        $VERBOSE_ECHO "awsctx: Started SSH agent for repository operations"
       fi
       
       # Clone the repository if it doesn't exist
@@ -341,12 +341,12 @@ in
         
         # Try to clone silently, redirecting output to avoid noise
         if ! ${pkgs.git}/bin/git clone ${cfg.repo} "${repoPath}" > /dev/null 2>&1; then
-          log_nix "awsctx" "Failed to clone repository automatically. This is normal if SSH keys aren't loaded."
+          $VERBOSE_ECHO "awsctx: Failed to clone repository automatically. This is normal if SSH keys aren't loaded."
           
           # Recreate the directory
           mkdir -p "${repoPath}"
         else
-          log_nix "awsctx" "Successfully cloned repository to ${repoPath}"
+          $VERBOSE_ECHO "awsctx: Successfully cloned repository to ${repoPath}"
         fi
       fi
       
