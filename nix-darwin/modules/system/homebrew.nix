@@ -10,11 +10,13 @@
 
     taps = [
       # These taps are now included by default
+      "ktr0731/evans" # for evans gRPC client
     ];
 
     brews = [
       "imagemagick" # image converter
       "doxx" # terminal document viewer for Microsoft Word files
+      "evans" # gRPC client
     ];
 
     casks = [
