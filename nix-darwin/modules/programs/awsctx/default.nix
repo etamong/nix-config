@@ -52,6 +52,7 @@ let
     # Get list of roles
     echo "Authenticating and getting SAML response..."
     list_roles="$(${pkgs.saml2aws}/bin/saml2aws --disable-keychain --skip-prompt list-roles --cache-saml --cache-file "''${saml_cache}" 2>&1)"
+    echo "[DEBUG] list_roles: $list_roles"
     
     # Process each role
     for role in $(echo "''${list_roles}" | grep "arn:aws:iam::" | cut -d' ' -f1); do
