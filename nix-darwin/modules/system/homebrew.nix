@@ -26,6 +26,7 @@
       "karabiner-elements"
       "claude"
       "ghostty"
+      "1password"
       # Add GUI applications here
     ];
   };
