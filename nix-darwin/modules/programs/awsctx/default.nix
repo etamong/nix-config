@@ -62,6 +62,7 @@ let
       
       # Use a separate shell to avoid AWS_SHARED_CREDENTIALS_FILE persisting
       (
+        unset AWS_SHARED_CREDENTIALS_FILE
         mkdir -p "''${CACHE_DIR}"
         ${pkgs.saml2aws}/bin/saml2aws --disable-keychain --skip-prompt login \
           --force \
