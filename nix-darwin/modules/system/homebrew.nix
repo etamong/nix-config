@@ -17,6 +17,7 @@
       "imagemagick" # image converter
       "doxx" # terminal document viewer for Microsoft Word files
       "evans" # gRPC client
+      "grpcurl"
     ];
 
     casks = [
