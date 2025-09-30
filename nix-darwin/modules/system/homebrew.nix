@@ -18,6 +18,7 @@
       "doxx" # terminal document viewer for Microsoft Word files
       "evans" # gRPC client
       "grpcurl"
+      "teleport" # Teleport client (tsh)
     ];
 
     casks = [
