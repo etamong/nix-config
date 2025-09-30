@@ -29,7 +29,7 @@
     awscli2
     azure-cli
     google-cloud-sdk
-    # teleport  # Temporarily disabled due to hostname-debian dependency issue
+    teleport
 
     # Monitoring and observability
     prometheus
