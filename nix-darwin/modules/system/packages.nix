@@ -53,5 +53,6 @@
     watch
     zip
     raycast
+    iterm2
   ];
 }

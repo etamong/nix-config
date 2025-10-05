@@ -5,5 +5,6 @@
     ./darwin.nix
     ./packages.nix
     ./homebrew.nix
+    ./iterm2
   ];
 }
