@@ -185,7 +185,7 @@ in
       echo "Configuring iTerm2..."
       
       # Check if the Launch Services registration needs to be fixed
-      ITERM_PATH="${pkgs.iterm2}/Applications/iTerm2.app"
+      ITERM_PATH="/Applications/iTerm.app"
       if [ -e "$ITERM_PATH" ]; then
         echo "Re-registering iTerm2 with Launch Services"
         /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$ITERM_PATH" > /dev/null 2>&1

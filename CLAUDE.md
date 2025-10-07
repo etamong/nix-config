@@ -47,5 +47,3 @@ nix build --dry-run .#darwinConfigurations.$(hostname).system  # Now works
 - **User modules**: `./modules/home/` (home-manager configuration)  
 - **Program modules**: `./modules/programs/` (application-specific settings)
 - **Theme modules**: `./modules/themes/` (UI/appearance configuration)
-
-- Always do `darwin-check` before `git commit`.

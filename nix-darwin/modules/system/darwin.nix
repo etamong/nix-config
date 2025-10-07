@@ -55,9 +55,6 @@
   # Set primary user for homebrew and system defaults
   system.primaryUser = "jhlee";
 
-  # Enable iTerm2 enhanced configuration
-  programs.iterm2.enhancedConfig = true;
-
   # The platform the configuration will be used on.
   nixpkgs.hostPlatform = "aarch64-darwin";
 
