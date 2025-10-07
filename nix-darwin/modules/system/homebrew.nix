@@ -22,8 +22,6 @@
     ];
 
     casks = [
-      "iterm2"
-      "gitkraken"
       "google-chrome"
       "karabiner-elements"
       "claude"
