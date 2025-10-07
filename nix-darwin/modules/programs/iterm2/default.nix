@@ -303,7 +303,9 @@ in
         in
           "/usr/bin/defaults write com.googlecode.iterm2 \"${key}\" ${typeFlag} ${valueStr} > /dev/null 2>&1"
       ) cfg.advancedPreferences)}
-      
+
+      # TODO: 상태바 설정이 안 먹는다. 나중에 함 보자.
+
       # Status bar configuration
       ${optionalString cfg.statusBar.show ''
         /usr/bin/defaults write com.googlecode.iterm2 "StatusBarEnabled" -bool true > /dev/null 2>&1

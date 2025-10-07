@@ -27,6 +27,7 @@
       "claude"
       "ghostty"
       "1password"
+      "raycast"
       # Add GUI applications here
     ];
   };

@@ -52,6 +52,5 @@
     unzip
     watch
     zip
-    raycast
   ];
 }

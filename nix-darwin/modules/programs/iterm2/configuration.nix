@@ -15,13 +15,14 @@
     useDefaultProfile = true;
 
     # Configure profiles
+    # TODO: 뭔가 아직 profile 이 생성은 되는데, 폰트 설정이나 그런게 안 먹는듯..? 다음에 좀 보자. 일부 이모티콘 글자도 깨진다.
     profiles = {
       "Default" = {
         default = true;
         name = "Default";
         # Using MesloLGS NF for better terminal experience
-        font = "MesloLGS-NF-Regular";
-        fontSize = 13;
+        font = "Sarasa Term K";
+        fontSize = 15;
         useNonAsciiFont = false;
         useBoldFont = true;
         useItalicFont = true;
