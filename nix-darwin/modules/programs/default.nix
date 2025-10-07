@@ -5,6 +5,7 @@
     ./zsh
     ./git
     ./dev-tools
+    ./iterm2
     ./ghostty
     ./awsctx
   ];
