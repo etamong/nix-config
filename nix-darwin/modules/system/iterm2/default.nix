@@ -189,14 +189,6 @@ in
       if [ -e "$ITERM_PATH" ]; then
         echo "Re-registering iTerm2 with Launch Services"
         /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$ITERM_PATH" > /dev/null 2>&1
-        
-        # Enable Spotlight indexing for Nix Apps directory
-        echo "Enabling Spotlight indexing for /Applications/Nix Apps/"
-        sudo mdutil -i on "/Applications/Nix Apps/" > /dev/null 2>&1 || true
-        
-        # Force Spotlight to reindex the iTerm2 app
-        echo "Forcing Spotlight to reindex iTerm2"
-        sudo mdimport "/Applications/Nix Apps/iTerm2.app" > /dev/null 2>&1 || true
       fi
 
       # Set basic preferences using defaults
