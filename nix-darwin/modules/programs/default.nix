@@ -2,10 +2,11 @@
 { config, lib, pkgs, ... }:
 {
   imports = [
-    ./zsh
-    ./git
+    ./awsctx
     ./dev-tools
     ./ghostty
-    ./awsctx
+    ./git
+    ./iterm2
+    ./zsh
   ];
 }

@@ -38,9 +38,10 @@ nix build --dry-run .#darwinConfigurations.$(hostname).system  # Now works
 #### Module Development Workflow
 1. **Create module** in appropriate directory (`./modules/`)
 2. **Add to imports** in relevant configuration files
-3. **Commit to git** immediately - this is essential for nix to find the module
+3. **Add to git stage** - this is essential for nix to find the module
 4. **Test configuration** with `darwin-check` or `nix build --dry-run`
 5. **Apply changes** with `darwin-switch`
+6. **Commit to git** immediately 
 
 #### Common Module Locations
 - **System modules**: `./modules/system/` (darwin-level configuration)
