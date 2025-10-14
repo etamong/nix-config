@@ -31,7 +31,7 @@
         workingDirectory = "~/";
         blurBackground = true;
         blurRadius = 2;
-        transparency = 0.3;
+        transparency = 0.1;
         useTransparencyOnlyForDefaultBg = true;
         closeOnExit = "always";
       };
