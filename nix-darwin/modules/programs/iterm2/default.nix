@@ -15,6 +15,89 @@ let
       baseName = builtins.replaceStrings [" "] ["-"] fontName;
     in
       "${baseName}-Regular";
+
+  # Generate status bar component configuration for iTerm2
+  mkStatusBarComponent = componentType:
+    let
+      componentMap = {
+        "CPU" = {
+          class = "iTermStatusBarCPUUtilizationComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+            };
+          };
+        };
+        "Memory" = {
+          class = "iTermStatusBarMemoryUtilizationComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+            };
+          };
+        };
+        "Network" = {
+          class = "iTermStatusBarNetworkUtilizationComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+            };
+          };
+        };
+        "CurrentDirectory" = {
+          class = "iTermStatusBarWorkingDirectoryComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+              "maxwidth" = 1.7976931348623157e+308;
+              "minwidth" = 0;
+            };
+          };
+        };
+        "UserName" = {
+          class = "iTermStatusBarUserNameComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+            };
+          };
+        };
+        "HostName" = {
+          class = "iTermStatusBarHostnameComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+            };
+          };
+        };
+        "DateTime" = {
+          class = "iTermStatusBarClockComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+              "format" = "M/d h:mm";
+            };
+          };
+        };
+        "Battery" = {
+          class = "iTermStatusBarBatteryComponent";
+          configuration = {
+            "knobs" = {
+              "base: priority" = 5;
+              "base: compression resistance" = 1;
+            };
+          };
+        };
+      };
+    in
+      componentMap.${componentType} or (throw "Unknown status bar component: ${componentType}");
 in
 {
   imports = [
@@ -64,35 +147,6 @@ in
       }'';
     };
 
-    # Status bar configuration
-    statusBar = {
-      show = mkOption {
-        type = types.bool;
-        default = false;
-        description = "Whether to show the status bar";
-      };
-
-      position = mkOption {
-        type = types.enum [ "top" "bottom" ];
-        default = "bottom";
-        description = "Position of the status bar";
-      };
-
-      components = mkOption {
-        type = types.listOf (types.enum [
-          "CPU"
-          "Memory"
-          "Network"
-          "CurrentDirectory"
-          "UserName"
-          "HostName"
-          "DateTime"
-          "Battery"
-        ]);
-        default = [ "CurrentDirectory" "DateTime" ];
-        description = "Components to show in the status bar";
-      };
-    };
 
     # Profile settings
     profiles = mkOption {
@@ -228,6 +282,42 @@ in
             default = true;
             description = "Whether to use transparency only for the default background color";
           };
+
+          # Status bar configuration (per-profile)
+          statusBar = {
+            show = mkOption {
+              type = types.bool;
+              default = false;
+              description = "Whether to show the status bar for this profile";
+            };
+
+            position = mkOption {
+              type = types.enum [ "top" "bottom" ];
+              default = "bottom";
+              description = "Position of the status bar";
+            };
+
+            components = mkOption {
+              type = types.listOf (types.enum [
+                "CPU"
+                "Memory"
+                "Network"
+                "CurrentDirectory"
+                "UserName"
+                "HostName"
+                "DateTime"
+                "Battery"
+              ]);
+              default = [ "CurrentDirectory" "DateTime" ];
+              description = "Components to show in the status bar";
+            };
+
+            rainbowStyle = mkOption {
+              type = types.enum [ "none" "light" "dark" "auto" ];
+              default = "none";
+              description = "Rainbow color style for status bar components";
+            };
+          };
         };
       });
       default = { };
@@ -285,6 +375,10 @@ in
       /usr/bin/defaults write com.googlecode.iterm2 "PromptOnQuit" -bool ${lib.boolToString (!cfg.disablePromptOnQuit)} > /dev/null 2>&1
       /usr/bin/defaults write com.googlecode.iterm2 "QuitWhenAllWindowsClosed" -bool false > /dev/null 2>&1
       /usr/bin/defaults write com.googlecode.iterm2 "UseMetal" -bool true > /dev/null 2>&1
+
+      # Set locale to en-US for iTerm2 (fixes language inconsistency across machines)
+      /usr/bin/defaults write com.googlecode.iterm2 "AppleLanguages" -array "en-US" > /dev/null 2>&1
+      /usr/bin/defaults write com.googlecode.iterm2 "AppleLocale" -string "en_US" > /dev/null 2>&1
       
       # Theme settings
       ${optionalString (cfg.theme == "dark") ''
@@ -400,36 +494,68 @@ in
               /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Only\ The\ Default\ BG\ Color\ Uses\ Transparency ${if profile.useTransparencyOnlyForDefaultBg then "true" else "false"}" "$PLIST" 2>/dev/null || \
               /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Only\ The\ Default\ BG\ Color\ Uses\ Transparency bool ${if profile.useTransparencyOnlyForDefaultBg then "true" else "false"}" "$PLIST" 2>/dev/null || true
 
+              ${optionalString profile.statusBar.show ''
+                # Enable Status Bar
+                /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Show\ Status\ Bar true" "$PLIST" 2>/dev/null || \
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Show\ Status\ Bar bool true" "$PLIST" 2>/dev/null || true
+
+                # Configure Status Bar
+                # Remove existing Status Bar Layout if present
+                /usr/libexec/PlistBuddy -c "Delete :New\ Bookmarks:0:Status\ Bar\ Layout" "$PLIST" 2>/dev/null || true
+
+                # Add Status Bar Layout dictionary
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout dict" "$PLIST" 2>/dev/null || true
+
+                # Add advanced configuration
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:advanced\ configuration dict" "$PLIST" 2>/dev/null || true
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:advanced\ configuration:algorithm integer 0" "$PLIST" 2>/dev/null || true
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:advanced\ configuration:auto-rainbow\ style integer ${toString (
+                  if profile.statusBar.rainbowStyle == "none" then 0
+                  else if profile.statusBar.rainbowStyle == "light" then 1
+                  else if profile.statusBar.rainbowStyle == "dark" then 2
+                  else 3  # auto
+                )}" "$PLIST" 2>/dev/null || true
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:advanced\ configuration:font string '.AppleSystemUIFont 12'" "$PLIST" 2>/dev/null || true
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:advanced\ configuration:remove-empty-components bool false" "$PLIST" 2>/dev/null || true
+
+                # Add components array
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components array" "$PLIST" 2>/dev/null || true
+
+                # Add each component
+                ${let
+                  componentIndices = lib.lists.range 0 (builtins.length profile.statusBar.components - 1);
+                in
+                  concatStringsSep "\n" (map (idx:
+                    let
+                      component = builtins.elemAt profile.statusBar.components idx;
+                      comp = mkStatusBarComponent component;
+                    in
+                      ''
+                        # Add component ${toString idx}: ${component}
+                        /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx} dict" "$PLIST" 2>/dev/null || true
+                        /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:class string '${comp.class}'" "$PLIST" 2>/dev/null || true
+                        /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration dict" "$PLIST" 2>/dev/null || true
+                        /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration:knobs dict" "$PLIST" 2>/dev/null || true
+                        /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration:knobs:base\:\ priority integer 5" "$PLIST" 2>/dev/null || true
+                        /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration:knobs:base\:\ compression\ resistance integer 1" "$PLIST" 2>/dev/null || true
+                        ${if component == "DateTime" then ''
+                          /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration:knobs:format string 'M/d h:mm'" "$PLIST" 2>/dev/null || true
+                        '' else if component == "CurrentDirectory" then ''
+                          /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration:knobs:maxwidth real 1.7976931348623157e+308" "$PLIST" 2>/dev/null || true
+                          /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Status\ Bar\ Layout:components:${toString idx}:configuration:knobs:minwidth real 0" "$PLIST" 2>/dev/null || true
+                        '' else ""}
+                      ''
+                  ) componentIndices)
+                }
+
+                echo "Status bar configured with ${toString (builtins.length profile.statusBar.components)} components"
+              ''}
+
               echo "iTerm2 profile configured: ${profile.name}"
             ''}
           ''
       ) cfg.profiles)}
 
-      # TODO: 상태바 설정이 안 먹는다. 나중에 함 보자.
-
-      # Status bar configuration
-      ${optionalString cfg.statusBar.show ''
-        /usr/bin/defaults write com.googlecode.iterm2 "StatusBarEnabled" -bool true > /dev/null 2>&1
-        /usr/bin/defaults write com.googlecode.iterm2 "StatusBarPosition" -int ${if cfg.statusBar.position == "bottom" then "1" else "0"} > /dev/null 2>&1
-        
-        # Status bar components
-        /usr/bin/defaults write com.googlecode.iterm2 "StatusBarComponents" -array ${concatMapStringsSep " " (component: 
-          let
-            componentMap = {
-              "CPU" = "com.iterm2.status-bar.cpu";
-              "Memory" = "com.iterm2.status-bar.memory";
-              "Network" = "com.iterm2.status-bar.network-throughput";
-              "CurrentDirectory" = "com.iterm2.status-bar.working-directory";
-              "UserName" = "com.iterm2.status-bar.username";
-              "HostName" = "com.iterm2.status-bar.hostname";
-              "DateTime" = "com.iterm2.status-bar.clock";
-              "Battery" = "com.iterm2.status-bar.battery";
-            };
-          in
-            "\"${componentMap.${component} or "com.iterm2.status-bar.${toLower component}"}\""
-        ) cfg.statusBar.components} > /dev/null 2>&1
-      ''}
-      
       # Force preferences to take effect
       killall cfprefsd 2>/dev/null || true
       

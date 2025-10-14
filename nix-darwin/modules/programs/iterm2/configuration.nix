@@ -36,6 +36,20 @@
         transparency = 0.1;
         useTransparencyOnlyForDefaultBg = true;
         closeOnExit = "always";
+
+        # Status bar configuration
+        statusBar = {
+          show = true;
+          position = "bottom";
+          components = [
+            "CurrentDirectory"
+            "CPU"
+            "Memory"
+            "Battery"
+            "DateTime"
+          ];
+          rainbowStyle = "auto";
+        };
       };
     };
 
@@ -70,19 +84,6 @@
       "DisableMetalWhenUnplugged" = false;
       "UseMetal" = true;
       "MetalMaximumFramesPerSecond" = 60;
-    };
-
-    # Status bar configuration
-    statusBar = {
-      show = true;
-      position = "bottom";
-      components = [
-        "CurrentDirectory"
-        "CPU"
-        "Memory"
-        "Battery"
-        "DateTime"
-      ];
     };
   };
 }
