@@ -23,7 +23,9 @@
         # Using MesloLGS NF for better terminal experience
         font = "Sarasa Term K";
         fontSize = 15;
-        useNonAsciiFont = false;
+        useNonAsciiFont = true;
+        nonAsciiFont = "MesloLGS NF";
+        nonAsciiFontSize = 15;
         useBoldFont = true;
         useItalicFont = true;
         unlimitedScrollback = true;

@@ -5,6 +5,16 @@ with lib;
 
 let
   cfg = config.programs.iterm2;
+
+  # Convert font name to PostScript format
+  # e.g., "Sarasa Term K" -> "Sarasa-Term-K-Regular"
+  #       "MesloLGS NF" -> "MesloLGS-NF-Regular"
+  fontToPostScript = fontName:
+    let
+      # Remove spaces and replace with hyphens for PostScript format
+      baseName = builtins.replaceStrings [" "] ["-"] fontName;
+    in
+      "${baseName}-Regular";
 in
 {
   imports = [
@@ -303,6 +313,97 @@ in
         in
           "/usr/bin/defaults write com.googlecode.iterm2 \"${key}\" ${typeFlag} ${valueStr} > /dev/null 2>&1"
       ) cfg.advancedPreferences)}
+
+      # Profile configuration
+      ${concatStringsSep "\n" (mapAttrsToList (profileName: profile:
+        let
+          profileIndex = if profile.default then "0" else "1";
+          normalFont = "${fontToPostScript profile.font} ${toString profile.fontSize}";
+          nonAsciiFont = if profile.useNonAsciiFont
+            then "${fontToPostScript profile.nonAsciiFont} ${toString profile.nonAsciiFontSize}"
+            else normalFont;
+        in
+          ''
+            # Configure profile: ${profileName}
+            /usr/bin/defaults write com.googlecode.iterm2 "NSNavLastRootDirectory" -string "~/" > /dev/null 2>&1
+
+            # Set font for default profile (index 0)
+            /usr/bin/defaults write com.googlecode.iterm2 "New Bookmarks" -array-add '{
+              "Name" = "${profile.name}";
+              "Guid" = "Default-Profile-${profileName}";
+              "Normal Font" = "${normalFont}";
+              ${optionalString profile.useNonAsciiFont ''"Non Ascii Font" = "${nonAsciiFont}";''}
+              "Use Non-ASCII Font" = ${if profile.useNonAsciiFont then "1" else "0"};
+              "ASCII Anti Aliased" = 1;
+              "Non-ASCII Anti Aliased" = 1;
+              "Use Bold Font" = ${if profile.useBoldFont then "1" else "0"};
+              "Use Italic Font" = ${if profile.useItalicFont then "1" else "0"};
+              "Use Bright Bold" = 1;
+              "Unlimited Scrollback" = ${if profile.unlimitedScrollback then "1" else "0"};
+              "Scrollback Lines" = ${toString profile.scrollbackLines};
+              "Transparency" = ${toString profile.transparency};
+              "Blur" = ${if profile.blurBackground then "1" else "0"};
+              "Blur Radius" = ${toString profile.blurRadius};
+              "Only The Default BG Color Uses Transparency" = ${if profile.useTransparencyOnlyForDefaultBg then "1" else "0"};
+              "Close Sessions On End" = ${if profile.closeOnExit == "always" then "1" else if profile.closeOnExit == "never" then "0" else "2"};
+              "Working Directory" = "${profile.workingDirectory}";
+              "Custom Directory" = "Yes";
+            }' > /dev/null 2>&1 || true
+
+            # Alternative: Modify existing profile directly using PlistBuddy
+            ${pkgs.writeShellScript "set-iterm-font" ''
+              PLIST="$HOME/Library/Preferences/com.googlecode.iterm2.plist"
+
+              # Ensure plist exists
+              if [ ! -f "$PLIST" ]; then
+                echo "iTerm2 preferences not found. Please run iTerm2 at least once."
+                exit 0
+              fi
+
+              # Convert binary plist to xml if needed
+              plutil -convert xml1 "$PLIST" 2>/dev/null || true
+
+              # Set font in the first profile (index 0)
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Normal\ Font '${normalFont}'" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Normal\ Font string '${normalFont}'" "$PLIST" 2>/dev/null || true
+
+              ${optionalString profile.useNonAsciiFont ''
+                /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Non\ Ascii\ Font '${nonAsciiFont}'" "$PLIST" 2>/dev/null || \
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Non\ Ascii\ Font string '${nonAsciiFont}'" "$PLIST" 2>/dev/null || true
+
+                /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Use\ Non-ASCII\ Font true" "$PLIST" 2>/dev/null || \
+                /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Use\ Non-ASCII\ Font bool true" "$PLIST" 2>/dev/null || true
+              ''}
+
+              # Set other profile options
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Transparency ${toString profile.transparency}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Transparency real ${toString profile.transparency}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Blur ${if profile.blurBackground then "true" else "false"}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Blur bool ${if profile.blurBackground then "true" else "false"}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Blur\ Radius ${toString profile.blurRadius}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Blur\ Radius real ${toString profile.blurRadius}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Unlimited\ Scrollback ${if profile.unlimitedScrollback then "true" else "false"}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Unlimited\ Scrollback bool ${if profile.unlimitedScrollback then "true" else "false"}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Scrollback\ Lines ${toString profile.scrollbackLines}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Scrollback\ Lines integer ${toString profile.scrollbackLines}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Use\ Bold\ Font ${if profile.useBoldFont then "true" else "false"}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Use\ Bold\ Font bool ${if profile.useBoldFont then "true" else "false"}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Use\ Italic\ Font ${if profile.useItalicFont then "true" else "false"}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Use\ Italic\ Font bool ${if profile.useItalicFont then "true" else "false"}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Only\ The\ Default\ BG\ Color\ Uses\ Transparency ${if profile.useTransparencyOnlyForDefaultBg then "true" else "false"}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Only\ The\ Default\ BG\ Color\ Uses\ Transparency bool ${if profile.useTransparencyOnlyForDefaultBg then "true" else "false"}" "$PLIST" 2>/dev/null || true
+
+              echo "iTerm2 profile configured: ${profile.name}"
+            ''}
+          ''
+      ) cfg.profiles)}
 
       # TODO: 상태바 설정이 안 먹는다. 나중에 함 보자.
 
