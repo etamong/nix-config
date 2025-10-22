@@ -33,7 +33,7 @@
         workingDirectory = "~/";
         blurBackground = true;
         blurRadius = 2;
-        transparency = 0.1;
+        transparency = 0.0;
         useTransparencyOnlyForDefaultBg = true;
         closeOnExit = "always";
 
