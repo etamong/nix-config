@@ -45,6 +45,9 @@
     dig
     tcpdump
 
+    # Database tools
+    postgresql
+
     # Other useful tools
     tmux
     screen
