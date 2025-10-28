@@ -1,7 +1,7 @@
 { config, pkgs, ... }: {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
-  environment.systemPackages = with pkgs; [
+  environment.systemPackages = (with pkgs; [
     # Essential tools
     btop
     curl
@@ -52,5 +52,8 @@
     unzip
     watch
     zip
+  ]) ++ [
+    # Use unstable channel for teleport_17
+    pkgs.unstable.teleport_17
   ];
 }
