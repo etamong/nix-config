@@ -310,6 +310,11 @@ with lib;
       ''
     ];
 
+    # Additional content added at the end of .zshrc
+    initExtra = ''
+      eval "$(direnv hook zsh)"
+    '';
+
     # Shell aliases
     shellAliases = {
       # ls aliases with color by default
