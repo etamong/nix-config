@@ -27,7 +27,8 @@
     gotestsum
     nodejs
     python3
-    saml2aws 
+    saml2aws
+    tfswitch
     vault
 
     # GUI Applications
