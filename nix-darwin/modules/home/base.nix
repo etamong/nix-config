@@ -30,6 +30,7 @@
     saml2aws
     tfswitch
     vault
+    _1password
 
     # GUI Applications
     unstable.claude-code
