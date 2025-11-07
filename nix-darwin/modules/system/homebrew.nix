@@ -19,6 +19,8 @@
       "evans" # gRPC client
       "grpcurl"
       "teleport" # Teleport client (tsh)
+      "wireguard-tools" # WireGuard VPN CLI tools
+      "wireguard-go" # WireGuard userspace implementation
     ];
 
     casks = [
