@@ -30,6 +30,7 @@
     saml2aws
     tfswitch
     vault
+    wireguard-tools
     _1password
 
     # GUI Applications
