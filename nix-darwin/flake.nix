@@ -16,6 +16,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Custom saml2aws build from devsisters fork
     saml2aws = {
       url = "github:devsisters/saml2aws";
@@ -79,12 +84,13 @@
     };
   };
 
-  outputs = inputs@{ 
+  outputs = inputs@{
     self,
     home-manager,
     nix-darwin,
     nixpkgs,
     nixpkgs-unstable,
+    nixvim,
     saml2aws,
     zsh-powerlevel10k,
     zsh-autopair,
@@ -157,6 +163,9 @@
             home-manager.users = {
               jhlee = import ./home/jhlee.nix;
             };
+            home-manager.sharedModules = [
+              nixvim.homeManagerModules.nixvim
+            ];
           }
         ];
       };
@@ -179,6 +188,9 @@
             home-manager.users = {
               jhlee = import ./home/jhlee.nix;
             };
+            home-manager.sharedModules = [
+              nixvim.homeManagerModules.nixvim
+            ];
           }
         ];
       };

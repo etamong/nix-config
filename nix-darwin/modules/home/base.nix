@@ -31,7 +31,7 @@
     tfswitch
     vault
     wireguard-tools
-    _1password
+    _1password-cli
 
     # GUI Applications
     unstable.claude-code
@@ -49,28 +49,6 @@
     };
 
     ".npm-global/.keep".text = "";
-
-    # Basic neovim configuration
-    ".config/nvim/init.lua".text = ''
-      -- Basic neovim configuration
-      vim.opt.number = true
-      vim.opt.relativenumber = true
-      vim.opt.tabstop = 2
-      vim.opt.shiftwidth = 2
-      vim.opt.expandtab = true
-      vim.opt.autoindent = true
-      vim.opt.smartindent = true
-      
-      -- Search settings
-      vim.opt.hlsearch = true
-      vim.opt.incsearch = true
-      vim.opt.ignorecase = true
-      vim.opt.smartcase = true
-      
-      -- Enable syntax highlighting
-      vim.cmd("syntax on")
-      vim.cmd("filetype plugin indent on")
-    '';
   };
 
   home.sessionVariables = {
