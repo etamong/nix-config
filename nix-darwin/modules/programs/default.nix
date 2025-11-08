@@ -7,6 +7,7 @@
     ./ghostty
     ./git
     ./iterm2
+    ./neovim
     ./zsh
   ];
 }
