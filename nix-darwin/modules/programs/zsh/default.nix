@@ -61,6 +61,7 @@ with lib;
       '';
       
       shellAliases = {
+        nn = "nix develop --command $@";
         python = "python3";
         vaultctx = "~/.vaultctx/script";
       };
