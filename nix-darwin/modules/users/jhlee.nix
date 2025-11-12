@@ -6,8 +6,7 @@
   programs.zsh.enablePowerlevel10k = true;
   programs.dev-tools.enable = true;
   programs.git.enhancedConfig = true;
-  programs.neovim.enhancedConfig = true;
-  
+
   # Enable services
   services.awsctx.enable = true;
 

@@ -21,11 +21,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Custom saml2aws build from devsisters fork
-    saml2aws = {
-      url = "github:devsisters/saml2aws";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+#     # Custom saml2aws build from devsisters fork
+#     saml2aws = {
+#       url = "github:devsisters/saml2aws";
+#       inputs.nixpkgs.follows = "nixpkgs";
+#     };
 
     zsh-powerlevel10k = {
       url = "github:romkatv/powerlevel10k/v1.19.0";
@@ -91,7 +91,7 @@
     nixpkgs,
     nixpkgs-unstable,
     nixvim,
-    saml2aws,
+    # saml2aws,
     zsh-powerlevel10k,
     zsh-autopair,
     ## Vim Plugins
@@ -118,7 +118,7 @@
         };
       })
       (final: prev: {
-        saml2aws = saml2aws.packages.${system}.default;
+        # saml2aws = saml2aws.packages.${system}.default;
       })
     ];
     
@@ -138,7 +138,7 @@
     specialArgs = {
       inherit username zsh-powerlevel10k zsh-autopair;
       inherit vim-nord vim-surround vim-commentary vim-easy-align fzf-vim vim-fugitive vim-nix vim-terraform vim-go;
-      inherit saml2aws;
+      # inherit saml2aws;
     };
   in
   {

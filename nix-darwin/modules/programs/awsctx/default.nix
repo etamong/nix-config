@@ -30,63 +30,63 @@ let
 
   # Create the aws-login-all script as a proper Nix package
   awsLoginAll = pkgs.writeShellScriptBin "aws-login-all" ''
-    #!/usr/bin/env bash
-    set -e
+  #!/usr/bin/env bash
+  set -e
+  
+  # Source XDG directories
+  eval "$(${getXdgDirs})"
+  
+  # Create necessary directories
+  mkdir -p "$CONFIG_DIR" "$CACHE_DIR"
+  
+  # Get credentials
+  if [ -z "''${SAML2AWS_PASSWORD}" ]; then
+    read -s -p "Password: " SAML2AWS_PASSWORD; export SAML2AWS_PASSWORD; echo
+  fi
+  read -p "OTP: " SAML2AWS_MFA_TOKEN; export SAML2AWS_MFA_TOKEN
+  
+  # Create temporary file for SAML cache
+  saml_cache="$(mktemp)"
+  trap "rm -f ''${saml_cache}" EXIT
+  
+  # Get list of roles
+  echo "Authenticating and getting SAML response..."
+  list_roles="$(${pkgs.saml2aws}/bin/saml2aws --disable-keychain --skip-prompt list-roles --cache-saml --cache-file "''${saml_cache}" 2>&1)"
+  echo "[DEBUG] list_roles: $list_roles"
+  
+  # Process each role
+  for role in $(echo "''${list_roles}" | grep "arn:aws:iam::" | cut -d' ' -f1); do
+    role_name="''${role##*/}"
+    echo "Processing role: ''${role_name}"
+    echo "Logging in to ''${role}..."
     
-    # Source XDG directories
-    eval "$(${getXdgDirs})"
-    
-    # Create necessary directories
-    mkdir -p "$CONFIG_DIR" "$CACHE_DIR"
-    
-    # Get credentials
-    if [ -z "''${SAML2AWS_PASSWORD}" ]; then
-      read -s -p "Password: " SAML2AWS_PASSWORD; export SAML2AWS_PASSWORD; echo
-    fi
-    read -p "OTP: " SAML2AWS_MFA_TOKEN; export SAML2AWS_MFA_TOKEN
-    
-    # Create temporary file for SAML cache
-    saml_cache="$(mktemp)"
-    trap "rm -f ''${saml_cache}" EXIT
-    
-    # Get list of roles
-    echo "Authenticating and getting SAML response..."
-    list_roles="$(${pkgs.saml2aws}/bin/saml2aws --disable-keychain --skip-prompt list-roles --cache-saml --cache-file "''${saml_cache}" 2>&1)"
-    echo "[DEBUG] list_roles: $list_roles"
-    
-    # Process each role
-    for role in $(echo "''${list_roles}" | grep "arn:aws:iam::" | cut -d' ' -f1); do
-      role_name="''${role##*/}"
-      echo "Processing role: ''${role_name}"
-      echo "Logging in to ''${role}..."
+    # Use a separate shell to avoid AWS_SHARED_CREDENTIALS_FILE persisting
+    (
+      unset AWS_SHARED_CREDENTIALS_FILE
+      mkdir -p "''${CACHE_DIR}"
+      ${pkgs.saml2aws}/bin/saml2aws --disable-keychain --skip-prompt login \
+        --force \
+        --role "''${role}" \
+        --session-duration 43200 \
+        --cache-saml \
+        --cache-file "''${saml_cache}"
       
-      # Use a separate shell to avoid AWS_SHARED_CREDENTIALS_FILE persisting
-      (
-        unset AWS_SHARED_CREDENTIALS_FILE
-        mkdir -p "''${CACHE_DIR}"
-        ${pkgs.saml2aws}/bin/saml2aws --disable-keychain --skip-prompt login \
-          --force \
-          --role "''${role}" \
-          --session-duration 43200 \
-          --cache-saml \
-          --cache-file "''${saml_cache}"
-        
-        # If login was successful, copy the credentials file to our destination
-        if [ $? -eq 0 ]; then
-          # Find the credentials file that was just created
-          if [ -f ~/.aws/credentials ]; then
-            echo "Copying credentials to ''${CACHE_DIR}/''${role_name}.credentials"
-            cp ~/.aws/credentials "''${CACHE_DIR}/''${role_name}.credentials"
-          else
-            echo "Could not find credentials file after login"
-          fi
+      # If login was successful, copy the credentials file to our destination
+      if [ $? -eq 0 ]; then
+        # Find the credentials file that was just created
+        if [ -f ~/.aws/credentials ]; then
+          echo "Copying credentials to ''${CACHE_DIR}/''${role_name}.credentials"
+          cp ~/.aws/credentials "''${CACHE_DIR}/''${role_name}.credentials"
         else
-          echo "Login failed for ''${role}"
+          echo "Could not find credentials file after login"
         fi
-      )
-    done
-    
-    echo "All roles processed successfully."
+      else
+        echo "Login failed for ''${role}"
+      fi
+    )
+  done
+  
+  echo "All roles processed successfully."
   '';
 
   # Create the awsctx binary
