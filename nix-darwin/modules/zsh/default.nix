@@ -155,8 +155,6 @@ with lib;
         export AWS_SDK_LOAD_CONFIG=1
 
         # Kubernetes
-        export KUBECONFIG=$HOME/.kube/config
-        export KUBE_CONFIG_PATH=$KUBECONFIG
         # Simplified path to avoid ZSH-specific syntax
         if [ -d "$HOME/.krew/bin" ]; then
           export PATH="$HOME/.krew/bin:$PATH"
