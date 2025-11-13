@@ -27,6 +27,7 @@
     gotestsum
     nodejs
     python3
+    uv
     saml2aws
     tfswitch
     vault
