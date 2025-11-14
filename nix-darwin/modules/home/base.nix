@@ -33,6 +33,7 @@
     vault
     wireguard-tools
     _1password-cli
+    glow
 
     # GUI Applications
     unstable.claude-code
