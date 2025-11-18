@@ -78,7 +78,18 @@
       nix.enable = true;
 
       # File navigation
-      fzf-lua.enable = true;
+      fzf-lua = {
+        enable = true;
+        keymaps = {
+          "<leader>ff" = "files";
+          "<leader>fg" = "live_grep";
+          "<leader>fb" = "buffers";
+          "<leader>fh" = "help_tags";
+          "<leader>fr" = "oldfiles";
+          "<leader>fc" = "grep_cword";
+          "<C-p>" = "files";
+        };
+      };
 
       # Status line
       lualine.enable = true;
