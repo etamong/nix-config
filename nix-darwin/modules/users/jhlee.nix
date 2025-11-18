@@ -38,6 +38,11 @@
       fd
       lazygit
       tree-sitter
+
+      # Image preview tools for fzf-lua
+      viu
+      chafa
+      ueberzugpp
     ];
 
     # Leader key
