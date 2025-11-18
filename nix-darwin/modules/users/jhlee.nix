@@ -38,6 +38,12 @@
       fd
     ];
 
+    # Leader key
+    globals = {
+      mapleader = " ";
+      maplocalleader = " ";
+    };
+
     # Basic options
     opts = {
       number = true;
