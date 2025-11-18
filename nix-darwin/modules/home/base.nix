@@ -34,6 +34,7 @@
     wireguard-tools
     _1password-cli
     glow
+    bat
 
     # GUI Applications
     unstable.claude-code
