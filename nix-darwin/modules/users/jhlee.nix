@@ -247,6 +247,24 @@
       filetype plugin indent on
     '';
 
+    extraConfigLua = ''
+      -- Configure fzf-lua image preview
+      require('fzf-lua').setup({
+        previewers = {
+          builtin = {
+            ueberzug_scaler = "cover",
+            extensions = {
+              ["png"] = { "viu", "-b" },
+              ["jpg"] = { "viu", "-b" },
+              ["jpeg"] = { "viu", "-b" },
+              ["gif"] = { "viu", "-b" },
+              ["webp"] = { "viu", "-b" },
+            },
+          },
+        },
+      })
+    '';
+
     # Keymaps
     keymaps = [
       {
