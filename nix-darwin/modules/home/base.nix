@@ -26,7 +26,9 @@
     go
     gotestsum
     nodejs
-    python3
+    (python3.withPackages (ps: with ps; [
+      pynvim
+    ]))
     uv
     saml2aws
     tfswitch

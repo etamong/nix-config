@@ -37,6 +37,7 @@
       ripgrep
       fd
       lazygit
+      tree-sitter
     ];
 
     # Leader key
