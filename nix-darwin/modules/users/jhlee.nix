@@ -92,6 +92,49 @@
         };
       };
 
+      web-devicons.enable = true;
+
+      nvim-tree = {
+        enable = true;
+        openOnSetup = false;
+        settings = {
+          sort_by = "case_sensitive";
+          view = {
+            width = 30;
+            side = "left";
+          };
+          renderer = {
+            group_empty = true;
+            icons.glyphs = {
+              default = "";
+              symlink = "";
+              folder = {
+                arrow_closed = "";
+                arrow_open = "";
+                default = "";
+                open = "";
+                empty = "";
+                empty_open = "";
+                symlink = "";
+                symlink_open = "";
+              };
+              git = {
+                unstaged = "✗";
+                staged = "✓";
+                unmerged = "";
+                renamed = "➜";
+                untracked = "★";
+                deleted = "";
+                ignored = "◌";
+              };
+            };
+          };
+          filters = {
+            dotfiles = false;
+          };
+        };
+      };
+
       # Status line
       lualine.enable = true;
 
@@ -198,6 +241,24 @@
         action = "<cmd>LazyGit<CR>";
         options = {
           desc = "Open LazyGit";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>e";
+        action = "<cmd>NvimTreeToggle<CR>";
+        options = {
+          desc = "Toggle file tree";
+          silent = true;
+        };
+      }
+      {
+        mode = "n";
+        key = "<leader>o";
+        action = "<cmd>NvimTreeFocus<CR>";
+        options = {
+          desc = "Focus file tree";
           silent = true;
         };
       }
