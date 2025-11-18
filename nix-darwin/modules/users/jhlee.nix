@@ -32,6 +32,7 @@
       rust-analyzer
       lua-language-server
       nodePackages.typescript-language-server
+      terraform-ls
 
       # Additional tools
       ripgrep
@@ -178,6 +179,7 @@
           };
           lua_ls.enable = true;
           ts_ls.enable = true;
+          terraformls.enable = true;
         };
         keymaps = {
           diagnostic = {
@@ -203,12 +205,47 @@
         };
       };
 
+      # GitHub Copilot
+      copilot-lua = {
+        enable = true;
+        settings = {
+          suggestion = {
+            enabled = false;  # Disabled as recommended when using copilot-cmp
+            auto_trigger = true;
+            keymap = {
+              accept = "<M-l>";
+              accept_word = false;
+              accept_line = false;
+              next = "<M-]>";
+              prev = "<M-[>";
+              dismiss = "<C-]>";
+            };
+          };
+          panel = {
+            enabled = false;  # Disabled as recommended when using copilot-cmp
+            auto_refresh = false;
+            keymap = {
+              jump_prev = "[[";
+              jump_next = "]]";
+              accept = "<CR>";
+              refresh = "gr";
+              open = "<M-CR>";
+            };
+          };
+        };
+      };
+
+      copilot-cmp = {
+        enable = true;
+      };
+
       # Autocompletion
       cmp = {
         enable = true;
         autoEnableSources = true;
         settings = {
           sources = [
+            { name = "copilot"; }
             { name = "nvim_lsp"; }
             { name = "path"; }
             { name = "buffer"; }
