@@ -296,7 +296,7 @@
       }
       {
         mode = "n";
-        key = "<leader>ef";
+        key = "<leader>i";
         action = "<cmd>NvimTreeFindFile<CR>";
         options = {
           desc = "Find current file in tree";
