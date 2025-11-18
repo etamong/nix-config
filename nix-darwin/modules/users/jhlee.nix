@@ -96,6 +96,14 @@
           "<leader>fc" = "grep_cword";
           "<C-p>" = "files";
         };
+        settings = {
+          files = {
+            previewer = "builtin";
+          };
+          grep = {
+            previewer = "builtin";
+          };
+        };
       };
 
       web-devicons.enable = true;
