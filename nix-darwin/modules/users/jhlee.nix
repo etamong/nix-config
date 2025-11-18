@@ -36,6 +36,7 @@
       # Additional tools
       ripgrep
       fd
+      lazygit
     ];
 
     # Leader key
@@ -96,6 +97,15 @@
 
       # Git integration
       gitsigns.enable = true;
+
+      lazygit = {
+        enable = true;
+        settings = {
+          floating_window_use_plenary = 0;
+          floating_window_scaling_factor = 0.9;
+          floating_window_border_chars = [ "╭" "─" "╮" "│" "╯" "─" "╰" "│" ];
+        };
+      };
 
       # LSP
       lsp = {
@@ -179,5 +189,18 @@
       syntax on
       filetype plugin indent on
     '';
+
+    # Keymaps
+    keymaps = [
+      {
+        mode = "n";
+        key = "<leader>gg";
+        action = "<cmd>LazyGit<CR>";
+        options = {
+          desc = "Open LazyGit";
+          silent = true;
+        };
+      }
+    ];
   };
 }
