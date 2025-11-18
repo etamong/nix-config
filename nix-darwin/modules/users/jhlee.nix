@@ -294,6 +294,15 @@
           silent = true;
         };
       }
+      {
+        mode = "n";
+        key = "<leader>ef";
+        action = "<cmd>NvimTreeFindFile<CR>";
+        options = {
+          desc = "Find current file in tree";
+          silent = true;
+        };
+      }
     ];
   };
 }
