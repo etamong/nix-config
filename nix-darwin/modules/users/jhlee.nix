@@ -23,6 +23,21 @@
     # Color scheme
     colorschemes.nord.enable = true;
 
+    # Extra packages (LSP servers, formatters, etc.)
+    extraPackages = with pkgs; [
+      # LSP servers
+      nixd
+      gopls
+      pyright
+      rust-analyzer
+      lua-language-server
+      nodePackages.typescript-language-server
+
+      # Additional tools
+      ripgrep
+      fd
+    ];
+
     # Basic options
     opts = {
       number = true;
@@ -64,6 +79,74 @@
 
       # Git integration
       gitsigns.enable = true;
+
+      # LSP
+      lsp = {
+        enable = true;
+        servers = {
+          nixd.enable = true;
+          gopls.enable = true;
+          pyright.enable = true;
+          rust_analyzer = {
+            enable = true;
+            installCargo = false;
+            installRustc = false;
+          };
+          lua_ls.enable = true;
+          ts_ls.enable = true;
+        };
+        keymaps = {
+          diagnostic = {
+            "<leader>e" = "open_float";
+            "[d" = "goto_prev";
+            "]d" = "goto_next";
+            "<leader>q" = "setloclist";
+          };
+          lspBuf = {
+            "gD" = "declaration";
+            "gd" = "definition";
+            "K" = "hover";
+            "gi" = "implementation";
+            "<C-k>" = "signature_help";
+            "<leader>wa" = "add_workspace_folder";
+            "<leader>wr" = "remove_workspace_folder";
+            "<leader>D" = "type_definition";
+            "<leader>rn" = "rename";
+            "<leader>ca" = "code_action";
+            "gr" = "references";
+            "<leader>f" = "format";
+          };
+        };
+      };
+
+      # Autocompletion
+      cmp = {
+        enable = true;
+        autoEnableSources = true;
+        settings = {
+          sources = [
+            { name = "nvim_lsp"; }
+            { name = "path"; }
+            { name = "buffer"; }
+          ];
+          mapping = {
+            "<C-Space>" = "cmp.mapping.complete()";
+            "<C-e>" = "cmp.mapping.abort()";
+            "<CR>" = "cmp.mapping.confirm({ select = true })";
+            "<Tab>" = "cmp.mapping(cmp.mapping.select_next_item(), {'i', 's'})";
+            "<S-Tab>" = "cmp.mapping(cmp.mapping.select_prev_item(), {'i', 's'})";
+          };
+        };
+      };
+
+      # Treesitter for better syntax highlighting
+      treesitter = {
+        enable = true;
+        settings = {
+          highlight.enable = true;
+          indent.enable = true;
+        };
+      };
     };
 
     # Extra plugins not available as nixvim plugins
