@@ -234,6 +234,7 @@ with lib;
 
         -- Additional keybindings
         vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+        vim.keymap.set('n', '<CR>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
         vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = 'Save' })
         vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = 'Quit' })
 
