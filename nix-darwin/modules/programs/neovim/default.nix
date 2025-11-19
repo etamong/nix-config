@@ -17,6 +17,10 @@ with lib;
         # Navigation
         leap-nvim
 
+        # File explorer
+        nvim-tree-lua
+        nvim-web-devicons
+
         # Fuzzy finder
         telescope-nvim
         telescope-fzf-native-nvim
@@ -37,7 +41,6 @@ with lib;
         # Additional useful plugins
         vim-commentary
         vim-surround
-        nvim-web-devicons
       ];
 
       extraPackages = with pkgs; [
@@ -79,8 +82,43 @@ with lib;
         vim.opt.splitbelow = true
         vim.opt.termguicolors = true
 
+        -- Fold settings
+        vim.opt.foldmethod = 'indent'  -- Use indent-based folding
+        vim.opt.foldlevel = 99         -- Start with all folds open
+        vim.opt.foldlevelstart = 99    -- Open all folds when opening a file
+        vim.opt.foldenable = true      -- Enable folding
+
         -- Nord theme
         vim.cmd('colorscheme nord')
+
+        -- Disable netrw (use nvim-tree instead)
+        vim.g.loaded_netrw = 1
+        vim.g.loaded_netrwPlugin = 1
+
+        -- nvim-tree setup
+        require('nvim-tree').setup({
+          view = {
+            width = 30,
+            side = 'left',
+          },
+          renderer = {
+            icons = {
+              show = {
+                file = true,
+                folder = true,
+                folder_arrow = true,
+                git = true,
+              },
+            },
+          },
+          filters = {
+            dotfiles = false,
+          },
+        })
+
+        -- nvim-tree keybindings
+        vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file explorer' })
+        vim.keymap.set('n', '<leader>ef', '<cmd>NvimTreeFindFile<CR>', { desc = 'Find current file in tree' })
 
         -- Leap setup
         require('leap').add_default_mappings()
@@ -184,6 +222,29 @@ with lib;
         vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Go to lower window' })
         vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Go to upper window' })
         vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Go to right window' })
+
+        -- Fold keybindings
+        vim.keymap.set('n', '<leader>zc', 'zc', { desc = 'Close fold under cursor' })
+        vim.keymap.set('n', '<leader>zo', 'zo', { desc = 'Open fold under cursor' })
+        vim.keymap.set('n', '<leader>za', 'za', { desc = 'Toggle fold under cursor' })
+        vim.keymap.set('n', '<leader>zC', 'zC', { desc = 'Close all folds under cursor recursively' })
+        vim.keymap.set('n', '<leader>zO', 'zO', { desc = 'Open all folds under cursor recursively' })
+        vim.keymap.set('n', '<leader>zM', 'zM', { desc = 'Close all folds in file' })
+        vim.keymap.set('n', '<leader>zR', 'zR', { desc = 'Open all folds in file' })
+        vim.keymap.set('n', '<leader>zj', 'zj', { desc = 'Move to next fold' })
+        vim.keymap.set('n', '<leader>zk', 'zk', { desc = 'Move to previous fold' })
+
+        -- Tab navigation
+        vim.keymap.set('n', '<leader>tn', '<cmd>tabnext<CR>', { desc = 'Next tab' })
+        vim.keymap.set('n', '<leader>tp', '<cmd>tabprevious<CR>', { desc = 'Previous tab' })
+        vim.keymap.set('n', '<leader>tt', '<cmd>tabnew<CR>', { desc = 'New tab' })
+        vim.keymap.set('n', '<leader>tc', '<cmd>tabclose<CR>', { desc = 'Close tab' })
+        vim.keymap.set('n', '<leader>to', '<cmd>tabonly<CR>', { desc = 'Close other tabs' })
+        vim.keymap.set('n', '<leader>1', '1gt', { desc = 'Go to tab 1' })
+        vim.keymap.set('n', '<leader>2', '2gt', { desc = 'Go to tab 2' })
+        vim.keymap.set('n', '<leader>3', '3gt', { desc = 'Go to tab 3' })
+        vim.keymap.set('n', '<leader>4', '4gt', { desc = 'Go to tab 4' })
+        vim.keymap.set('n', '<leader>5', '5gt', { desc = 'Go to tab 5' })
       '';
     };
   };
