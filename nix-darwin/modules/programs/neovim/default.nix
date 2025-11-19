@@ -189,7 +189,27 @@ with lib;
             vim.keymap.set('n', '<leader>f', function()
               vim.lsp.buf.format { async = true }
             end, opts)
+            -- Diagnostic keybindings
+            vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
+            vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
+            vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
+            vim.keymap.set('n', '<leader>dl', vim.diagnostic.setloclist, opts)
           end,
+        })
+
+        -- Global diagnostic settings
+        vim.diagnostic.config({
+          virtual_text = true,
+          signs = true,
+          underline = true,
+          update_in_insert = false,
+          severity_sort = true,
+          float = {
+            border = "rounded",
+            source = "always",
+            header = "",
+            prefix = "",
+          },
         })
 
         -- Configure LSP servers
@@ -222,6 +242,12 @@ with lib;
         vim.keymap.set('n', '<C-j>', '<C-w>j', { desc = 'Go to lower window' })
         vim.keymap.set('n', '<C-k>', '<C-w>k', { desc = 'Go to upper window' })
         vim.keymap.set('n', '<C-l>', '<C-w>l', { desc = 'Go to right window' })
+
+        -- Window resizing (Option/Alt + hjkl)
+        vim.keymap.set('n', '<M-k>', ':resize +2<CR>', { desc = 'Increase window height' })
+        vim.keymap.set('n', '<M-j>', ':resize -2<CR>', { desc = 'Decrease window height' })
+        vim.keymap.set('n', '<M-h>', ':vertical resize -2<CR>', { desc = 'Decrease window width' })
+        vim.keymap.set('n', '<M-l>', ':vertical resize +2<CR>', { desc = 'Increase window width' })
 
         -- Fold keybindings
         vim.keymap.set('n', '<leader>zc', 'zc', { desc = 'Close fold under cursor' })

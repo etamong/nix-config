@@ -37,6 +37,10 @@
         useTransparencyOnlyForDefaultBg = true;
         closeOnExit = "always";
 
+        # Option key behavior - use Esc+ for Meta key support in Neovim
+        leftOptionKey = "Esc+";
+        rightOptionKey = "Esc+";
+
         # Status bar configuration
         statusBar = {
           show = true;

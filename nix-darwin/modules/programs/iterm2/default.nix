@@ -283,6 +283,19 @@ in
             description = "Whether to use transparency only for the default background color";
           };
 
+          # Option key behavior
+          leftOptionKey = mkOption {
+            type = types.enum [ "Normal" "Meta" "Esc+" ];
+            default = "Normal";
+            description = "Behavior of the left Option key";
+          };
+
+          rightOptionKey = mkOption {
+            type = types.enum [ "Normal" "Meta" "Esc+" ];
+            default = "Normal";
+            description = "Behavior of the right Option key";
+          };
+
           # Status bar configuration (per-profile)
           statusBar = {
             show = mkOption {
@@ -493,6 +506,29 @@ in
 
               /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Only\ The\ Default\ BG\ Color\ Uses\ Transparency ${if profile.useTransparencyOnlyForDefaultBg then "true" else "false"}" "$PLIST" 2>/dev/null || \
               /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Only\ The\ Default\ BG\ Color\ Uses\ Transparency bool ${if profile.useTransparencyOnlyForDefaultBg then "true" else "false"}" "$PLIST" 2>/dev/null || true
+
+              # Option key configuration
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Option\ Key\ Sends ${toString (
+                if profile.leftOptionKey == "Normal" then 0
+                else if profile.leftOptionKey == "Meta" then 1
+                else 2  # Esc+
+              )}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Option\ Key\ Sends integer ${toString (
+                if profile.leftOptionKey == "Normal" then 0
+                else if profile.leftOptionKey == "Meta" then 1
+                else 2  # Esc+
+              )}" "$PLIST" 2>/dev/null || true
+
+              /usr/libexec/PlistBuddy -c "Set :New\ Bookmarks:0:Right\ Option\ Key\ Sends ${toString (
+                if profile.rightOptionKey == "Normal" then 0
+                else if profile.rightOptionKey == "Meta" then 1
+                else 2  # Esc+
+              )}" "$PLIST" 2>/dev/null || \
+              /usr/libexec/PlistBuddy -c "Add :New\ Bookmarks:0:Right\ Option\ Key\ Sends integer ${toString (
+                if profile.rightOptionKey == "Normal" then 0
+                else if profile.rightOptionKey == "Meta" then 1
+                else 2  # Esc+
+              )}" "$PLIST" 2>/dev/null || true
 
               ${optionalString profile.statusBar.show ''
                 # Enable Status Bar
