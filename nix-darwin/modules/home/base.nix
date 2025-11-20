@@ -32,6 +32,7 @@
     uv
     saml2aws
     tfswitch
+    terraform-ls
     vault
     wireguard-tools
     _1password-cli
