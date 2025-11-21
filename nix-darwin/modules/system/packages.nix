@@ -20,7 +20,6 @@
     kubectx
     k9s
     kubernetes-helm
-    terraform
     terragrunt
     ansible
     docker
