@@ -71,9 +71,6 @@
       # Enable mouse support
       mouse = "a";
 
-      # Clipboard
-      clipboard = "unnamedplus";
-
       # File settings
       fixeol = true;  # Ensure newline at end of file
       endofline = true;  # Write EOL for last line
