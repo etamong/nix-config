@@ -2,6 +2,19 @@
 
 with lib;
 
+let
+  blame-nvim = pkgs.vimUtils.buildVimPlugin {
+    pname = "blame-nvim";
+    version = "2024-11-15";
+    src = pkgs.fetchFromGitHub {
+      owner = "FabijanZulj";
+      repo = "blame.nvim";
+      rev = "59cf695de09a8bfcc3584969262e3139d3552375";
+      sha256 = "sha256-0j1vMxkfYq0LlFfQL3cYKLw1xUbGPjzKN3c8/VIjZy0=";
+    };
+    meta.homepage = "https://github.com/FabijanZulj/blame.nvim";
+  };
+in
 {
   options.programs.neovim.enhancedConfig = mkEnableOption "Enhanced Neovim configuration with plugins and LSP";
 
@@ -41,6 +54,9 @@ with lib;
         # Additional useful plugins
         vim-commentary
         vim-surround
+
+        # Git blame
+        blame-nvim
       ];
 
       extraPackages = with pkgs; [
@@ -186,9 +202,9 @@ with lib;
             vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
             vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
             vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-            vim.keymap.set('n', '<leader>f', function()
+            vim.keymap.set('n', '<leader>=', function()
               vim.lsp.buf.format { async = true }
-            end, opts)
+            end, { buffer = ev.buf, desc = 'Format code' })
             -- Diagnostic keybindings
             vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
             vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
@@ -231,6 +247,14 @@ with lib;
 
         -- Lazygit setup
         vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<cr>', { desc = 'LazyGit' })
+
+        -- blame.nvim setup
+        require('blame').setup({
+          date_format = '%Y-%m-%d',
+          virtual_style = 'right_align',
+          merge_consecutive = true,
+        })
+        vim.keymap.set('n', '<leader>gb', '<cmd>BlameToggle<cr>', { desc = 'Toggle git blame' })
 
         -- Additional keybindings
         vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
