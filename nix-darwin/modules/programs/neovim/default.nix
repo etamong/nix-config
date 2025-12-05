@@ -202,7 +202,7 @@ in
             vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
             vim.keymap.set({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, opts)
             vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-            vim.keymap.set('n', '<leader>=', function()
+            vim.keymap.set('n', '<leader>l', function()
               vim.lsp.buf.format { async = true }
             end, { buffer = ev.buf, desc = 'Format code' })
             -- Diagnostic keybindings
@@ -259,7 +259,6 @@ in
         -- Additional keybindings
         vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
         vim.keymap.set('n', '<CR>', '<cmd>nohlsearch<CR>', { desc = 'Clear search highlight' })
-        vim.keymap.set('n', '<leader>l', '<cmd>let @/=""<CR>', { desc = 'Clear search register' })
         vim.keymap.set('n', '<leader>w', '<cmd>w<CR>', { desc = 'Save' })
         vim.keymap.set('n', '<leader>q', '<cmd>q<CR>', { desc = 'Quit' })
 
