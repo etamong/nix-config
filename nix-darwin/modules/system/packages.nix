@@ -21,6 +21,7 @@
     k9s
     kubernetes-helm
     terragrunt
+    tflint
     ansible
     docker
     docker-compose
