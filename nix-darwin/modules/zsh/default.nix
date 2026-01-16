@@ -378,6 +378,8 @@ with lib;
       kc = "kubectl config current-context";
       kcc = "kubectl config get-contexts";
       ksc = "kubectl config use-context";
+      kctx = "kubectx";
+      kns = "kubens";
 
       # Neovim
       vim = "nvim";
